@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>enigma</groupId>
+  <artifactId>enigma</artifactId>
+  <name>enigma</name>
+  <version>0</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+
+        <configuration>
+          <mainClass>Main</mainClass>
+        </configuration>
+
+        <executions>
+
+          <!-- mvn exec:exec@build-docs -->
+          <execution>
+            <id>build-docs</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>make</executable>
+              <arguments>
+                <argument>all</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
