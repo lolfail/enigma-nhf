@@ -1,0 +1,25 @@
+@startsalt
+{+
+  {* Fájl | **Titkosítás** | Rotor-ok | Plugboard }
+  .
+  {
+    {SI
+      HELLO WORLD HELLO WORLD
+      HELLO WORLD HELLO WORLD
+      .
+      .
+    } |
+    {SI
+      PGCDZ JSYGT OIBFU XWNZH
+      ZGSNE JARUA FMKGM XGVHQ
+      .
+      .
+    }
+    .
+    {
+      [ Ok ] |
+      [ Clear ]
+    }
+  }
+}
+@endsalt
