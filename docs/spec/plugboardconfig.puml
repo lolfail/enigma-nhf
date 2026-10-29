@@ -1,0 +1,18 @@
+@startsalt
+{+
+  {* Fájl | Titkosítás | Rotorok | **Plugboard** }
+
+  {
+    Adj meg összeköttetéseket:
+    "AD BF TG                               "
+    <color:green> <&thumb-up> 3 összeköttetés létrehozva!</color>
+  }
+
+  ----
+
+  {
+    {+ A<&resize-width>D} | {+ B<&resize-width>F} | {+ T<&resize-width>G}
+  }
+
+}
+@endsalt

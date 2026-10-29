@@ -1,0 +1,22 @@
+@startsalt
+{+
+  {* Fájl | Titkosítás | **Rotorok** | Plugboard }
+
+  {
+    Rotorok száma: |     {SI ""  ""3}
+    . | [ Ok ]
+  }
+
+  ----
+
+  {
+    Rotor #1 | ^F^ | [Összeköttetés]
+    Rotor #2 | ^Y^ | [Összeköttetés]
+    Rotor #3 | ^B^^ B^^ C^^ D^ | [Összeköttetés]
+  }
+
+  .
+  .
+  .
+}
+@endsalt

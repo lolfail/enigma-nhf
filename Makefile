@@ -7,7 +7,7 @@ SPEC = spec
 all: spec
 
 .PHONY: spec
-spec: $(DOCS_DIR)/$(SPEC)/codingwindow.svg $(DOCS_DIR)/$(SPEC)/saveload.svg
+spec: $(DOCS_DIR)/$(SPEC)/codingwindow.svg $(DOCS_DIR)/$(SPEC)/saveload.svg $(DOCS_DIR)/$(SPEC)/rotorconfig.svg $(DOCS_DIR)/$(SPEC)/plugboardconfig.svg
 	pandoc --resource-path=$(DOCS_DIR)/$(SPEC) \
 		-V lang=hu -V polyglossia-otherlangs="" \
 		-M babel-lang=magyar \
