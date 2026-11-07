@@ -1,6 +1,6 @@
 @startsalt
 {+
-  {* Fájl | **Titkosítás** | Rotorok | Plugboard }
+  {* Fájl | **Titkosítás** | Rotorok | Plugboard | Reflector }
   .
   {
     {SI
@@ -18,7 +18,7 @@
     .
     {
       [ Ok ] |
-      [ Clear ]
+      [ Törlés ]
     }
   }
 }
