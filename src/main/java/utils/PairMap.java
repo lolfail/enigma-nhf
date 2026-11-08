@@ -35,17 +35,26 @@ public class PairMap<A, B> implements Map<A,B> {
     return forwardSize;
   }
 
+  // essential feature: double-keyed - both a and b must be unique
   public B put(A a, B b) {
-    B returned = forwardStore.put(a, b);
+    B overwritten = forwardStore.put(a, b);
+
+    forwardStore.remove(reverseStore.get(b));
+    if (overwritten != null)
+      reverseStore.remove(overwritten);
+
     reverseStore.put(b, a);
-    return returned;
-    // TODO! check if both can be placed otherwise fail
+    return overwritten;
   }
   public A putReverse(B b, A a) {
+    A overwritten = reverseStore.put(b, a);
+
+    reverseStore.remove(forwardStore.get(a));
+    if (overwritten != null)
+      forwardStore.remove(overwritten);
+
     forwardStore.put(a, b);
-    A returned = reverseStore.put(b, a);
-    return returned;
-    // TODO! check if both can be placed otherwise fail
+    return overwritten;
   }
 
   // precisely the reason we use a second map
@@ -59,14 +68,14 @@ public class PairMap<A, B> implements Map<A,B> {
   public B remove(Object a) {
     B removed = forwardStore.remove(a);
     boolean hadEntry = reverseStore.remove(removed, a);
-    if (!hadEntry)
+    if (removed != null && !hadEntry)
       throw new RuntimeException(); // should have had the same thing but reversed
     return removed;
   }
   public A removeReverse(Object b) {
     A removed = reverseStore.remove(b);
     boolean hadEntry = forwardStore.remove(removed, b);
-    if (!hadEntry)
+    if (removed != null && !hadEntry)
       throw new RuntimeException(); // should have had the same thing but reversed
     return removed;
   }
@@ -102,20 +111,18 @@ public class PairMap<A, B> implements Map<A,B> {
   public Set<B> values() {
     return reverseStore.keySet();
   }
-  public Set<A> valuesReversed() {
+  public Set<A> valuesReverse() {
     return forwardStore.keySet();
   }
 
   public void putAll(Map<? extends A, ? extends B> map) {
-    forwardStore.putAll(map);
     for (Map.Entry<? extends A, ? extends B> entry : map.entrySet()) {
-      reverseStore.put(entry.getValue(), entry.getKey());
+      this.put(entry.getKey(), entry.getValue());
     }
   }
   public void putAllReverse(Map<? extends B, ? extends A> map) {
-    reverseStore.putAll(map);
     for (Map.Entry<? extends B, ? extends A> entry : map.entrySet()) {
-      forwardStore.put(entry.getValue(), entry.getKey());
+      this.putReverse(entry.getKey(), entry.getValue());
     }
   }
 }
