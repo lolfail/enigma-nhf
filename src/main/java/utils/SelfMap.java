@@ -35,9 +35,8 @@ public class SelfMap<T> implements Map<T, T> {
   public T put(T a, T b) {
     if (!identityMappings && a.equals(b))
       return null; // shortcircuit -- exception should be preferred...
-
-    pairings.put(a, b);
-    return pairings.get(a);
+    else
+      return pairings.put(a, b);
   }
 
   public T get(Object t) {
@@ -57,7 +56,7 @@ public class SelfMap<T> implements Map<T, T> {
     T forward = pairings.remove(t);
     T reverse = pairings.removeReverse(t);
 
-    if (forward == null && reverse == null) return null;
+    if      (forward == null && reverse == null) return null;
     else if (forward == null && reverse != null) return reverse;
     else if (forward != null && reverse == null) return forward;
     else throw new RuntimeException(); // removing one should have removed the other
