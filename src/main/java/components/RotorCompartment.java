@@ -9,6 +9,10 @@ import java.util.ListIterator;
 import java.util.Collection;
 import java.util.Iterator;
 
+import validators.Validator;
+import validators.ReflectorValidator;
+import validators.RotorValidator;
+
 import java.util.ArrayList;
 
 public class RotorCompartment implements List<Rotor> {
@@ -16,12 +20,22 @@ public class RotorCompartment implements List<Rotor> {
   private SelfMap<Integer> reflector;
   private int numContactPoints;
 
+  private Validator<Rotor> rotorValidator;
+  private Validator<SelfMap<Integer>> reflectorValidator;
+
   public RotorCompartment(int numContactPoints) {
     this.numContactPoints = numContactPoints;
     this.rotors = new ArrayList<>();
+
+    this.rotorValidator = new RotorValidator(this.numContactPoints);
+    this.reflectorValidator = new ReflectorValidator(this.numContactPoints);
   }
 
   public void setReflector(SelfMap<Integer> reflector) {
+    boolean reflectorOkay = reflectorValidator.validate(reflector);
+    if (!reflectorOkay)
+      throw new Error(); // TODO!
+
     this.reflector = reflector;
   }
   public SelfMap<Integer> getReflector() {
@@ -52,7 +66,9 @@ public class RotorCompartment implements List<Rotor> {
   // {{{ ATOMIC LIST OPERATIONS
 
   public void add(int index, Rotor rotor) {
-    // TODO! check for rotor numContactPoints != the one specified
+    boolean rotorOkay = rotorValidator.validate(rotor);
+    if (!rotorOkay)
+      throw new Error(); // TODO!
 
     if (index > 0)
       rotors.get(index - 1).setNextRotor(rotor);
@@ -62,7 +78,9 @@ public class RotorCompartment implements List<Rotor> {
   }
 
   public Rotor set(int index, Rotor rotor) {
-    // TODO! check for rotor numContactPoints != the one specified
+    boolean rotorOkay = rotorValidator.validate(rotor);
+    if (!rotorOkay)
+      throw new Error(); // TODO!
 
     if (index > 0)
       rotors.get(index - 1).setNextRotor(rotor);

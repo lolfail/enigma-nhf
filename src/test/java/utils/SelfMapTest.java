@@ -123,6 +123,15 @@ class SelfMapTest {
   }
 
   /// IDENTITY MAPPING SPECIFIC ///
+  @Test
+  void getIdentity() {
+    map = new SelfMap<>(false);
+    assertFalse(map.areIdentityMappingsAllowed());
+
+    map = new SelfMap<>(true);
+    assertTrue(map.areIdentityMappingsAllowed());
+  }
+
   @Test 
   void identityFailsPutIfIdentityDisabled() {
     map = new SelfMap<>(false);

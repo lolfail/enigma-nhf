@@ -22,6 +22,15 @@ public class SelfMap<T> implements Map<T, T> {
   }
 
   /**
+   * Get whether {@link #identityMappings} are allowed.
+   *
+   * @implNote This acts as a getter. There is no setter, because this is too much of a core property.
+   */
+  public boolean areIdentityMappingsAllowed() {
+    return identityMappings;
+  }
+
+  /**
    * Get whether there are no mappings.
    */
   public boolean isEmpty() {

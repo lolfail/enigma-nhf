@@ -2,6 +2,9 @@ package components;
 
 import utils.PairMap;
 
+import validators.Validator;
+import validators.RotorWiringValidator;
+
 public class Rotor {
   // wiring enumerates contact points relative to the rotor
   // so if Rotor has not rotated, 0th is the topmost one
@@ -20,8 +23,9 @@ public class Rotor {
     this.startingPosition = 0;
     this.rotationalPosition = this.startingPosition;
 
-    // TODO! verify wiring's correctness, else throw
-    // put a class in charge of default values and validation?
+    boolean wiringOkay = (new RotorWiringValidator(this.numContactPoints)).validate(wiring);
+    if (!wiringOkay)
+      throw new Error(); // TODO! some custom error
     this.wiring = wiring;
   }
 
