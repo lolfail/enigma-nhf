@@ -20,7 +20,7 @@ class SelfMapTest {
     this.map = new SelfMap<>();
   }
 
-  /// TEST ATOMIC FEATURES ///
+  // {{{ TEST ATOMIC FEATURES
   @Test 
   void empty() {
     assertTrue(map.isEmpty());
@@ -43,8 +43,9 @@ class SelfMapTest {
     assertTrue(map.isEmpty());
     assertEquals(0, map.size());
   }
+  // }}}
 
-  /// GETTING, PUTTING, REMOVING ///
+  // {{{ GETTING, PUTTING, REMOVING
   @Test 
   void getNotFound() {
     assertNull(map.get(1));
@@ -93,8 +94,9 @@ class SelfMapTest {
     assertEquals(source.size(), map.size());
     assertEquals(allvalues, map.values());
   }
+  // }}}
 
-  /// CONTAINSKEY & VALUE, KEYSET & VALUES ///
+  // {{{ CONTAINSKEY & VALUE, KEYSET & VALUES
   @Test 
   void containsKeyValue() {
     map.put(1, 2);
@@ -121,8 +123,9 @@ class SelfMapTest {
     assertEquals(allKeyValues, map.keySet());
     assertEquals(allKeyValues, map.values());
   }
+  // }}}
 
-  /// IDENTITY MAPPING SPECIFIC ///
+  // {{{ IDENTITY MAPPING SPECIFIC
   @Test
   void getIdentity() {
     map = new SelfMap<>(false);
@@ -179,4 +182,5 @@ class SelfMapTest {
     assertEquals(1, map.get(2));
     assertEquals(2, map.get(1));
   }
+  // }}}
 }

@@ -20,7 +20,7 @@ class PairMapTest {
     this.map = new PairMap<>();
   }
 
-  /// TEST ATOMIC FEATURES ///
+  // {{{ TEST ATOMIC FEATURES
   @Test 
   void empty() {
     assertTrue(map.isEmpty());
@@ -43,8 +43,9 @@ class PairMapTest {
     assertTrue(map.isEmpty());
     assertEquals(0, map.size());
   }
+  /// }}}
 
-  /// SINGLE GETTING, PUTTING, REMOVING ///
+  // {{{ SINGLE GETTING, PUTTING, REMOVING
   @Test 
   void getNotFound() {
     assertNull(map.get(1));
@@ -120,8 +121,9 @@ class PairMapTest {
     assertTrue(map.isEmpty());
     assertNull(map.removeReverse("a"));
   }
+  // }}}
 
-  /// CONTAINSKEY & VALUE ///
+  // {{{ CONTAINSKEY & VALUE
   @Test 
   void notContainsKeyValue() {
     boolean key = map.containsKey(1);
@@ -155,8 +157,9 @@ class PairMapTest {
     assertSame(key, valueReverse);
     assertSame(value, keyReverse);
   }
+  // }}}
 
-  /// ENTRYSET, KEYSET & VALUES ///
+  // {{{ ENTRYSET, KEYSET & VALUES
   @Test 
   void entrySetAndReverse() {
     map.put(1, "a");
@@ -203,8 +206,9 @@ class PairMapTest {
     assertSame(keys, valuesReverse);
     assertSame(values, keysReverse);
   }
+  // }}}
 
-  /// PUTALL AND PUTALLREVERSE ///
+  // {{{ PUTALL AND PUTALLREVERSE
   @Test 
   void putAll() {
     Map<Integer, String> source = Map.of(1, "a", 2, "b");
@@ -226,8 +230,9 @@ class PairMapTest {
       assertNotNull(map.getReverse(entry.getKey()));
     }
   }
+  /// }}}
 
-  /// LOGIC TESTS ///
+  // {{{ LOGIC TESTS
   // test that both components are keys, are mapped together
   @Test 
   void bothAreKeys() {
@@ -275,4 +280,5 @@ class PairMapTest {
 
     assertEquals(1, map.size());
   }
+  // }}}
 }
