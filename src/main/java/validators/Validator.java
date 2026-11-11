@@ -1,5 +1,5 @@
 package validators;
 
 public interface Validator<T> {
-  public boolean validate(T obj);
+  public void validate(T obj);
 }

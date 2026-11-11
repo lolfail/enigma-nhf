@@ -32,9 +32,7 @@ public class RotorCompartment implements List<Rotor> {
   }
 
   public void setReflector(SelfMap<Integer> reflector) {
-    boolean reflectorOkay = reflectorValidator.validate(reflector);
-    if (!reflectorOkay)
-      throw new Error(); // TODO!
+    reflectorValidator.validate(reflector);
 
     this.reflector = reflector;
   }
@@ -66,9 +64,7 @@ public class RotorCompartment implements List<Rotor> {
   // {{{ ATOMIC LIST OPERATIONS
 
   public void add(int index, Rotor rotor) {
-    boolean rotorOkay = rotorValidator.validate(rotor);
-    if (!rotorOkay)
-      throw new Error(); // TODO!
+    rotorValidator.validate(rotor);
 
     if (index > 0)
       rotors.get(index - 1).setNextRotor(rotor);
@@ -78,9 +74,7 @@ public class RotorCompartment implements List<Rotor> {
   }
 
   public Rotor set(int index, Rotor rotor) {
-    boolean rotorOkay = rotorValidator.validate(rotor);
-    if (!rotorOkay)
-      throw new Error(); // TODO!
+    rotorValidator.validate(rotor);
 
     if (index > 0)
       rotors.get(index - 1).setNextRotor(rotor);

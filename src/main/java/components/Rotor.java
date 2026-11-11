@@ -2,7 +2,6 @@ package components;
 
 import utils.PairMap;
 
-import validators.Validator;
 import validators.RotorWiringValidator;
 
 public class Rotor {
@@ -23,9 +22,8 @@ public class Rotor {
     this.startingPosition = 0;
     this.rotationalPosition = this.startingPosition;
 
-    boolean wiringOkay = (new RotorWiringValidator(this.numContactPoints)).validate(wiring);
-    if (!wiringOkay)
-      throw new Error(); // TODO! some custom error
+    (new RotorWiringValidator(this.numContactPoints))
+      .validate(wiring);
     this.wiring = wiring;
   }
 
@@ -34,6 +32,8 @@ public class Rotor {
   }
 
   public void setStartingPosition(int position) {
+    // TODO! position not within limits?
+
     this.startingPosition = position;
   }
   public int getStartingPosition() {
@@ -83,6 +83,10 @@ public class Rotor {
       nextRotor.rotate();
 
     rotationalPosition = modulusRotation(rotationalPosition + 1);
+  }
+
+  public int getRotationalPosition() {
+    return this.rotationalPosition;
   }
 
   public void reset() {
