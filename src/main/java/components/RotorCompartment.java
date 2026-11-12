@@ -122,7 +122,7 @@ public class RotorCompartment implements List<Rotor> {
 
   public boolean containsAll(Collection<?> c) {
     for (Object e : c)
-      if (!rotors.contains(e))
+      if (!this.contains(e))
         return false;
     return true;
   }
