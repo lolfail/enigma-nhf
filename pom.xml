@@ -10,12 +10,25 @@
 
       <plugin>
         <!-- execute make all to build docs -->
+
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
 
         <configuration>
-          <mainClass>Main</mainClass>
+          <!-- mainClass type configuration failed to pass environment variables so it is now direct java invokation -->
+          <executable>java</executable>
+          <arguments>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>Main</argument>
+          </arguments>
+
+          <!-- wayland does not seem to like swing... -->
+          <environmentVariables>
+            <_JAVA_AWT_WM_NONREPARENTING>1</_JAVA_AWT_WM_NONREPARENTING>
+            <GDK_BACKEND>x11</GDK_BACKEND>
+          </environmentVariables>
         </configuration>
 
         <executions>

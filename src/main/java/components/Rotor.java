@@ -3,12 +3,15 @@ package components;
 import utils.PairMap;
 
 import validators.RotorWiringValidator;
+import validators.Validator;
 
 public class Rotor {
   // wiring enumerates contact points relative to the rotor
   // so if Rotor has not rotated, 0th is the topmost one
   // if Rotor has rotated 1 time, 0th is the one left or right to the topmost one
   private PairMap<Integer, Integer> wiring;
+  private Validator<PairMap<Integer, Integer>> wiringValidator;
+
   private int numContactPoints;
 
   private int startingPosition;
@@ -22,8 +25,9 @@ public class Rotor {
     this.startingPosition = 0;
     this.rotationalPosition = this.startingPosition;
 
-    (new RotorWiringValidator(this.numContactPoints))
-      .validate(wiring);
+    this.wiringValidator = new RotorWiringValidator(this.numContactPoints);
+
+    wiringValidator.validate(wiring);
     this.wiring = wiring;
   }
 
@@ -31,8 +35,18 @@ public class Rotor {
     return this.numContactPoints;
   }
 
+  public PairMap<Integer, Integer> getWiring() {
+    return this.wiring;
+  }
+
+  public void setWiring(PairMap<Integer, Integer> wiring) {
+    wiringValidator.validate(wiring);
+    this.wiring = wiring;
+  }
+
   public void setStartingPosition(int position) {
-    // TODO! position not within limits?
+    if (!(0 <= position && position < numContactPoints))
+      throw new IndexOutOfBoundsException("Such a starting position can not be possible!");
 
     this.startingPosition = position;
   }
