@@ -55,7 +55,6 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
       mapping.put(key, value);
     }
 
-    System.out.println(mapping.entrySet());
     return mapping;
   }
 

@@ -4,7 +4,6 @@ import components.EnigmaMachine;
 import components.TranslationLayer;
 
 import graphical.CryptoPanel;
-import graphical.ReflectorPanel;
 import graphical.RotorPanel;
 
 import java.awt.BorderLayout;
@@ -21,6 +20,8 @@ import javax.swing.JPanel;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+import utils.SelfMap;
 
 // the reason the panels aren't handling this is:
 // to fully abstract away the string ID stuff (so the parent class needs invoke a .getId() or something),
@@ -56,8 +57,8 @@ public class MainFrame extends JFrame {
     CardLayout cardLayoutManager = (CardLayout) contentPanel.getLayout();
 
     CryptoPanel cryptoPanel = new CryptoPanel(enigmaMachine, translationLayer);
-    ReflectorPanel reflectorPanel = new ReflectorPanel(enigmaMachine, translationLayer);
-    PlugboardPanel plugboardPanel = new PlugboardPanel(enigmaMachine, translationLayer);
+    MapperPanel<SelfMap<Integer>> reflectorPanel = new MapperPanel<>(translationLayer, enigmaMachine::setReflector, enigmaMachine::getReflector);
+    MapperPanel<SelfMap<Integer>> plugboardPanel = new MapperPanel<>(translationLayer, enigmaMachine::setPlugboard, enigmaMachine::getPlugboard);
     RotorPanel rotorPanel = new RotorPanel(enigmaMachine, translationLayer);
 
     contentPanel.add(cryptoPanel, "CRYPTO");
