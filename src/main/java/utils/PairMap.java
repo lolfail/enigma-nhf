@@ -14,6 +14,13 @@ public class PairMap<A, B> implements Map<A,B> {
     this.reverseStore = new HashMap<>();
   }
 
+  public PairMap(Map<A, B> map) {
+    this.forwardStore = new HashMap<>();
+    this.reverseStore = new HashMap<>();
+    for (Entry<A, B> entry : map.entrySet())
+      this.put(entry.getKey(), entry.getValue());
+  }
+
   /**
    * Get whether there are no mappings.
    */

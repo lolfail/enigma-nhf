@@ -16,6 +16,13 @@ public class SelfMap<T> implements Map<T, T> {
     this.pairings = new PairMap<>();
     // this(true);
   }
+  public SelfMap(Map<T,T> map) {
+    this.pairings = new PairMap<>(map);
+  }
+  public SelfMap(boolean identityMappings, Map<T,T> map) {
+    this.identityMappings = identityMappings;
+    this.pairings = new PairMap<>(map);
+  }
   public SelfMap(boolean identityMappings) {
     this.identityMappings = identityMappings;
     this.pairings = new PairMap<>();
@@ -110,12 +117,11 @@ public class SelfMap<T> implements Map<T, T> {
     return got != null;
   }
 
+  /**
+   * Calls the underlying {@link PairMap}'s entrySet method.
+   */
   public Set<Map.Entry<T,T>> entrySet() {
-    return null;
-    // TODO!
-    // this could do a couple of nice things:
-    //   - call underlying pairings.entrySet() (utilizes forwards hashmap)
-    //   - make a new set where every pair has some nice property (like a < b)
+    return pairings.entrySet();
   }
 
   /**
