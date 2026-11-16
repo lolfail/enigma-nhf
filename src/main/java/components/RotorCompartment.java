@@ -29,6 +29,8 @@ public class RotorCompartment implements List<Rotor> {
 
     this.rotorValidator = new RotorValidator(this.numContactPoints);
     this.reflectorValidator = new ReflectorValidator(this.numContactPoints);
+
+    this.reflector = new SelfMap<>(false);
   }
 
   public void setReflector(SelfMap<Integer> reflector) {

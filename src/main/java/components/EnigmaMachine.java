@@ -4,6 +4,9 @@ import components.RotorCompartment;
 import utils.PairMap;
 import utils.SelfMap;
 
+import java.util.Map;
+import java.util.HashMap;
+
 // high level obfuscation layer
 // user must not talk with underlying rotor objects! 
 // instead provide methods to set them through those
@@ -13,9 +16,20 @@ public class EnigmaMachine {
   private RotorCompartment rotors;
   private SelfMap<Integer> plugboard;
 
+  private Map<Integer, Integer> identityMapping() {
+    Map<Integer, Integer> wiring = new HashMap<>();
+    for (int i = 0; i < numContactPoints; i++)
+      wiring.put(i, i);
+    return wiring;
+  }
+
   public EnigmaMachine(int numContactPoints) {
+    this.numContactPoints = numContactPoints;
     this.rotors = new RotorCompartment(numContactPoints);
     this.plugboard = new SelfMap<>(true);
+
+    // prefill with default wiring
+    this.plugboard.putAll(identityMapping());
   }
 
   public int getNumContactPoints() {
@@ -30,30 +44,31 @@ public class EnigmaMachine {
     return output;
   }
 
-  private PairMap<Integer, Integer> defaultWiring() {
-    PairMap<Integer, Integer> wiring = new PairMap<>();
-    for (int i = 0; i < numContactPoints; i++)
-      wiring.put(i, i);
-    return wiring;
-  }
-
   // if we need more rotors: fill with identity wiring
   // if we need less rotors: remove last n
   public void setNumRotors(int num) {
     if (num >= rotors.size()) {
       int numNeeded = num - rotors.size();
       for (int i = 0; i < numNeeded; i++) {
-        Rotor extension = new Rotor(numContactPoints, defaultWiring());
+        // prefill with a default mapping
+        PairMap<Integer, Integer> wiring = new PairMap<>();
+        wiring.putAll(identityMapping());
+
+        Rotor extension = new Rotor(numContactPoints, wiring);
         rotors.add(extension);
       }
     } else {
       int numToDelete = rotors.size() - num;
       for (int i = 0; i < numToDelete; i++)
-        rotors.remove(rotors.size() - i);
+        rotors.remove(rotors.size() - 1);
     }
   }
   public int getNumRotors() {
     return rotors.size();
+  }
+
+  public void reset() {
+    rotors.reset();
   }
 
   public PairMap<Integer, Integer> getWiring(int rotorIndex) {
@@ -82,6 +97,7 @@ public class EnigmaMachine {
   }
   public void setPlugboard(SelfMap<Integer> plugboard) {
     // TODO! this may be filled out with identity
+    // validate it!
     this.plugboard = plugboard;
   }
 }
