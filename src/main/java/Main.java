@@ -1,23 +1,43 @@
+import components.EnigmaMachine;
+import components.TranslationLayer;
+
 import utils.PairMap;
 import utils.SelfMap;
 
-public class Main {
-  public static void main(String args[]) {
-    System.out.println("Hello World!");
-    // PairMap<String, Integer> map = new PairMap<>();
-    // map.put("Josh", 4);
-    // map.put("Bracket", 1);
-    // System.out.println(map.get("Josh"));
-    // System.out.println(map.get("Bracket"));
-    // System.out.println(map.getReverse(4));
-    // System.out.println(map.getReverse(1));
+import java.util.Map;
+import java.util.HashMap;
 
-    SelfMap<Integer> map = new SelfMap<>();
-    map.put(1, 1);
-    map.put(2, 3);
-    System.out.println(map.get(1));
-    System.out.println(map.get(2));
-    System.out.println(map.get(3));
-    System.out.println(map.size());
+import graphical.MainFrame;
+import javax.swing.SwingUtilities;
+
+public class Main {
+  private static Map<Integer, Integer> identityMapping(int count) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < count; i++)
+      map.put(i, i);
+    return map;
+  }
+  private static Map<Integer, Integer> shiftMapping(int count) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < count-1; i+=2)
+      map.put(i, i+1);
+    return map;
+  }
+
+  public static void main(String args[]) {
+    // create the EnigmaMachine here, because we may expose a CLI interface later!
+    TranslationLayer translationLayer = new TranslationLayer();
+    EnigmaMachine enigmaMachine = new EnigmaMachine(26);
+
+    enigmaMachine.setNumRotors(3);
+
+    enigmaMachine.setReflector(new SelfMap<>(false, shiftMapping(26)));
+
+    enigmaMachine.setPlugboard(new SelfMap<>(true, identityMapping(26)));
+
+    SwingUtilities.invokeLater(() -> {
+      MainFrame frame = new MainFrame(enigmaMachine, translationLayer);
+      frame.setVisible(true);
+    });
   }
 };
