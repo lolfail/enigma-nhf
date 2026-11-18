@@ -6,13 +6,23 @@ import components.TranslationLayer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
+
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import javax.swing.Box;
+import java.awt.Color;
 
 public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   private TranslationLayer translationLayer;
@@ -20,6 +30,19 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   private Supplier<V> supplier;
 
   private JTextField mappingTextField;
+  private JLabel feedbackLabel;
+  private MappingsListPanel mappingsListPanel;
+
+  private void setFailureLabel(String message) {
+    feedbackLabel.setText(message);
+    feedbackLabel.setForeground(new Color(0x60, 0x10, 0x0b)); // jam red TODO! not visible enough
+  }
+  private void setSuccessLabel(Map<Integer, Integer> map) {
+    int mappedNum = map.entrySet().size();
+    feedbackLabel.setText(mappedNum + " mappings created.");
+    feedbackLabel.setForeground(new Color(0x00, 0x42, 0x25)); // british racing green TODO! not visible enough
+    mappingsListPanel.updateMappings(map);
+  }
 
   private String generateTextFieldDefaults() {
     V mapping = supplier.get();
@@ -45,7 +68,7 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     String[] pairs = text.split(" ");
     for (String pair : pairs) {
       if (pair.length() != 2)
-        return mapping; // shortcircuit on wrong mapping -- LET THE USER KNOW TODO!
+        throw new RuntimeException("Wrong format!");
     }
 
     mapping.clear();
@@ -61,8 +84,13 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   private Action getUpdateHandler() {
     return new AbstractAction("Ok") {
       public void actionPerformed(ActionEvent e) {
-        V updated = updateMapping(mappingTextField.getText());
-        consumer.accept(updated);
+        try {
+          V updated = updateMapping(mappingTextField.getText());
+          consumer.accept(updated);
+          setSuccessLabel(updated);
+        } catch (RuntimeException err) {
+          setFailureLabel(err.getMessage());
+        }
       }
     };
   }
@@ -71,13 +99,96 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     this.translationLayer = translationLayer;
     this.consumer = consumer;
     this.supplier = supplier;
+    setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
 
+    // left horizontal spacer
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.gridwidth = 1;
+    gbc.gridheight = 3;
+    gbc.weightx = 0.2;
+    gbc.weighty = 0.0;
+    gbc.fill = GridBagConstraints.BOTH;
+    add(Box.createGlue(), gbc);
+
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.gridwidth = 1;
+    gbc.gridheight = 1;
+    gbc.weightx = 0.6;
+    gbc.weighty = 0.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.insets = new Insets(0, 0, 4, 8);
     this.mappingTextField = new JTextField(generateTextFieldDefaults());
-    mappingTextField.setColumns(52);
+    mappingTextField.setColumns(26);
+    add(mappingTextField, gbc);
 
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    gbc.insets = new Insets(0, 0, 12, 8);
+    this.feedbackLabel = new JLabel();
+    add(feedbackLabel, gbc);
+
+    gbc.gridx = 2;
+    gbc.gridy = 0;
+    gbc.gridheight = 2;
+    gbc.weightx = 0.0;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.anchor = GridBagConstraints.NORTH;
+    gbc.insets = new Insets(0, 0, 0, 0);
     JButton okButton = new JButton(getUpdateHandler()); // via spec there should not be buttons
+    add(okButton, gbc);
 
-    add(mappingTextField);
-    add(okButton);
+    gbc.gridx = 1;
+    gbc.gridy = 2;
+    gbc.gridwidth = 2;
+    gbc.gridheight = 1;
+    gbc.weightx = 0.6;
+    gbc.weighty = 0.4;
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    this.mappingsListPanel = new MappingsListPanel();
+    add(mappingsListPanel, gbc);
+
+    // right horizontal spacer
+    gbc.gridx = 3;
+    gbc.gridy = 0;
+    gbc.gridwidth = 1;
+    gbc.gridheight = 3;
+    gbc.weightx = 0.2;
+    gbc.weighty = 0.0;
+    gbc.fill = GridBagConstraints.BOTH;
+    add(Box.createGlue(), gbc);
+
+    // bottom vertical spacer
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    gbc.gridwidth = 4;
+    gbc.gridheight = 1;
+    gbc.weightx = 0.0;
+    gbc.weighty = 0.6;
+    gbc.fill = GridBagConstraints.BOTH;
+    add(Box.createGlue(), gbc);
+  }
+}
+
+class MappingsListPanel extends JPanel {
+  public MappingsListPanel() {
+    setLayout(new GridLayout(5, 6));
+  }
+
+  void updateMappings(Map<Integer, Integer> map) {
+    removeAll();
+    for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+      // TODO! add borders around it
+      String format = entry.getKey() + " - " + entry.getValue();
+      JLabel entryMappingLabel = new JLabel(format, SwingConstants.CENTER);
+      entryMappingLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      add(entryMappingLabel);
+    }
+    revalidate();
+    repaint();
   }
 }
