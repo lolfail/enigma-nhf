@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -66,6 +67,9 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     V mapping = supplier.get();
 
     String[] pairs = text.split(" ");
+    if (pairs.length == 1 && pairs[0].equals(""))
+      pairs = new String[0]; // if empty split would still make: [""]
+
     for (String pair : pairs) {
       if (pair.length() != 2)
         throw new RuntimeException("Wrong format!");
@@ -73,32 +77,34 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
 
     mapping.clear();
     for (String pair : pairs) {
-      int key = translationLayer.charToInt(pair.charAt(0));
-      int value = translationLayer.charToInt(pair.charAt(1));
+      Integer key = translationLayer.charToInt(pair.charAt(0));
+      Integer value = translationLayer.charToInt(pair.charAt(1));
+      if (key == null)
+        throw new RuntimeException("Illegal character: " + pair.charAt(0));
+      else if (value == null)
+        throw new RuntimeException("Illegal character: " + pair.charAt(1));
+
       mapping.put(key, value);
     }
 
     return mapping;
   }
 
-  private Action getUpdateHandler() {
-    return new AbstractAction("Ok") {
-      public void actionPerformed(ActionEvent e) {
-        try {
-          V updated = updateMapping(mappingTextField.getText());
-          consumer.accept(updated);
-          setSuccessLabel(updated);
-        } catch (RuntimeException err) {
-          setFailureLabel(err.getMessage());
-        }
-      }
-    };
+  private void getUpdateHandler(ActionEvent e) {
+    try {
+      V updated = updateMapping(mappingTextField.getText());
+      consumer.accept(updated);
+      setSuccessLabel(updated);
+    } catch (RuntimeException err) {
+      setFailureLabel(err.getMessage());
+    }
   }
 
   public MapperPanel(TranslationLayer translationLayer, Consumer<V> consumer, Supplier<V> supplier) {
     this.translationLayer = translationLayer;
     this.consumer = consumer;
     this.supplier = supplier;
+
     setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
 
@@ -138,7 +144,8 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     gbc.fill = GridBagConstraints.NONE;
     gbc.anchor = GridBagConstraints.NORTH;
     gbc.insets = new Insets(0, 0, 0, 0);
-    JButton okButton = new JButton(getUpdateHandler()); // via spec there should not be buttons
+    JButton okButton = new JButton("Ok"); // via spec there should not be buttons
+    okButton.addActionListener(this::getUpdateHandler);
     add(okButton, gbc);
 
     gbc.gridx = 1;
@@ -149,7 +156,7 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     gbc.weighty = 0.4;
     gbc.fill = GridBagConstraints.BOTH;
     gbc.insets = new Insets(0, 0, 0, 0);
-    this.mappingsListPanel = new MappingsListPanel();
+    this.mappingsListPanel = new MappingsListPanel(translationLayer);
     add(mappingsListPanel, gbc);
 
     // right horizontal spacer
@@ -174,8 +181,13 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   }
 }
 
+// translationLayer is passed down instead of giving it a charmap
+// because otherwise constructing a new generic map would be needed
 class MappingsListPanel extends JPanel {
-  public MappingsListPanel() {
+  private TranslationLayer translationLayer;
+
+  public MappingsListPanel(TranslationLayer translationLayer) {
+    this.translationLayer = translationLayer;
     setLayout(new GridLayout(5, 6));
   }
 
@@ -183,9 +195,13 @@ class MappingsListPanel extends JPanel {
     removeAll();
     for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
       // TODO! add borders around it
-      String format = entry.getKey() + " - " + entry.getValue();
+      char key = translationLayer.intToChar(entry.getKey());
+      char value = translationLayer.intToChar(entry.getValue());
+
+      String format = key + " - " + value;
       JLabel entryMappingLabel = new JLabel(format, SwingConstants.CENTER);
       entryMappingLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
       add(entryMappingLabel);
     }
     revalidate();

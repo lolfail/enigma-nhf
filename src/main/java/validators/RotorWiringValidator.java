@@ -14,14 +14,15 @@ public class RotorWiringValidator implements Validator<PairMap<Integer, Integer>
   }
 
   public void validate(PairMap<Integer, Integer> mapping) {
+    // is everything mapped from [0, numContactPoints) ?
+    for (int i = 0; i < numContactPoints; i++)
+      if (!mapping.containsKey(i) || !mapping.containsKeyReverse(i))
+        throw new RotorWiringException("Some pins were not mapped!");
+
     // do we have exactly the amount of mappings?
     boolean sufficientMappings = mapping.size() == numContactPoints;
     if (!sufficientMappings)
       throw new RotorWiringException("Improper number of mappings!");
 
-    // is everything mapped from [0, numContactPoints) ?
-    for (int i = 0; i < numContactPoints; i++)
-      if (!mapping.containsKey(i) || !mapping.containsKeyReverse(i))
-        throw new RotorWiringException("Some pins were not mapped!");
   }
 }

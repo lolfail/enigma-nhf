@@ -23,27 +23,53 @@ import javax.swing.JMenuItem;
 
 import utils.SelfMap;
 
-// the reason the panels aren't handling this is:
-// to fully abstract away the string ID stuff (so the parent class needs invoke a .getId() or something),
-// we'd need to shift that behaviour down to the children
-// however the ID needs to be registered at the parent container level
-// so if the user of the class does not know this, we can get corrupted behaviour
-class NavigationActionFactory {
-  private Container container;
-  private CardLayout cardLayoutManager;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.function.Supplier;
 
-  public NavigationActionFactory(Container container, CardLayout cardLayoutManager) {
-    this.container = container;
-    this.cardLayoutManager = cardLayoutManager;
+// reason for this is that CardLayout keeps every view in memory
+// => would have to write refresh handlers upon navigation
+// simpler to just re-create panels
+class LazyCardPanel extends JPanel {
+  private Map<String, Supplier<JPanel>> views = new HashMap<>();
+  private JPanel currentView;
+
+  public LazyCardPanel() {
+    super(new BorderLayout());
   }
 
-  public Action getNavigationAction(String identifier, String name) {
-    return new AbstractAction(name) {
-      public void actionPerformed(ActionEvent e) {
-        cardLayoutManager.show(container, identifier);
-      }
-    };
+  public void registerView(String identifier, Supplier<JPanel> factory) {
+    views.put(identifier, factory);
   }
+
+  public void showView(String identifier) {
+    Supplier<JPanel> viewFactory = views.get(identifier);
+    if (viewFactory == null)
+      return;
+    JPanel view = viewFactory.get();
+
+    if (currentView != null)
+      remove(currentView);
+    add(view);
+    currentView = view;
+
+    revalidate();
+    repaint();
+  }
+
+  public JMenuItem getJMenuItem(String identifier, String name) {
+    JMenuItem menuItem = new JMenuItem(name);
+
+    // trick to keep it from stretching across the entire menubar
+    menuItem.setMaximumSize(menuItem.getPreferredSize());
+
+    menuItem.addActionListener(e -> {
+      this.showView(identifier);
+    });
+
+    return menuItem;
+  }
+
 }
 
 public class MainFrame extends JFrame {
@@ -53,29 +79,28 @@ public class MainFrame extends JFrame {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
 
-    JPanel contentPanel = new JPanel(new CardLayout());
-    CardLayout cardLayoutManager = (CardLayout) contentPanel.getLayout();
+    LazyCardPanel lazyCardPanel = new LazyCardPanel();
+    lazyCardPanel.registerView("CRYPTO", () ->
+        new CryptoPanel(enigmaMachine, translationLayer));
+    lazyCardPanel.registerView("REFLECTOR", () ->
+        new MapperPanel<SelfMap<Integer>>(translationLayer, enigmaMachine::setReflector, enigmaMachine::getReflector));
+    lazyCardPanel.registerView("PLUGBOARD", () ->
+        new MapperPanel<SelfMap<Integer>>(translationLayer, enigmaMachine::setPlugboard, enigmaMachine::getPlugboard));
+    lazyCardPanel.registerView("ROTOR", () ->
+        new RotorPanel(enigmaMachine, translationLayer));
 
-    CryptoPanel cryptoPanel = new CryptoPanel(enigmaMachine, translationLayer);
-    MapperPanel<SelfMap<Integer>> reflectorPanel = new MapperPanel<>(translationLayer, enigmaMachine::setReflector, enigmaMachine::getReflector);
-    MapperPanel<SelfMap<Integer>> plugboardPanel = new MapperPanel<>(translationLayer, enigmaMachine::setPlugboard, enigmaMachine::getPlugboard);
-    RotorPanel rotorPanel = new RotorPanel(enigmaMachine, translationLayer);
-
-    contentPanel.add(cryptoPanel, "CRYPTO");
-    contentPanel.add(reflectorPanel, "REFLECTOR");
-    contentPanel.add(plugboardPanel, "PLUGBOARD");
-    contentPanel.add(rotorPanel, "ROTOR");
+    lazyCardPanel.showView("CRYPTO");
 
     JMenuBar menuBar = new JMenuBar();
-    NavigationActionFactory navFactory = new NavigationActionFactory(contentPanel, cardLayoutManager);
-    menuBar.add(new JMenuItem(navFactory.getNavigationAction("CRYPTO", "crypto")));
-    menuBar.add(new JMenuItem(navFactory.getNavigationAction("REFLECTOR", "reflector")));
-    menuBar.add(new JMenuItem(navFactory.getNavigationAction("PLUGBOARD", "plugboard")));
-    menuBar.add(new JMenuItem(navFactory.getNavigationAction("ROTOR", "rotors")));
+    menuBar.add(new FileMenu("File", enigmaMachine));
+    menuBar.add(lazyCardPanel.getJMenuItem("CRYPTO", "crypto"));
+    menuBar.add(lazyCardPanel.getJMenuItem("REFLECTOR", "reflector"));
+    menuBar.add(lazyCardPanel.getJMenuItem("PLUGBOARD", "plugboard"));
+    menuBar.add(lazyCardPanel.getJMenuItem("ROTOR", "rotors"));
 
     setJMenuBar(menuBar);
 
-    add(contentPanel, BorderLayout.CENTER);
+    add(lazyCardPanel, BorderLayout.CENTER);
     setVisible(true);
   }
 }

@@ -65,7 +65,7 @@ public class EnigmaMarshaller {
     doc.appendChild(machineRoot);
 
     Element plugboard = doc.createElement("Plugboard");
-    appendMapChildren(doc, enigmaMachine.getPlugboard(), plugboard, "cable", true);
+    appendMapChildren(doc, enigmaMachine.getPlugboard(), plugboard, "Cable", true);
     machineRoot.appendChild(plugboard);
 
     Element rotors = doc.createElement("Rotors");

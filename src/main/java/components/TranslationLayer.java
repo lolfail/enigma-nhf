@@ -29,10 +29,10 @@ public class TranslationLayer {
     return translator;
   }
 
-  public int charToInt(char ch) {
+  public Integer charToInt(char ch) {
     return translator.get(ch);
   }
-  public char intToChar(int i) {
+  public Character intToChar(int i) {
     return translator.getReverse(i);
   }
 

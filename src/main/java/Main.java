@@ -25,7 +25,7 @@ public class Main {
   }
 
   public static void main(String args[]) {
-    // create the EnigmaMachine here, because we may expose a CLI interface later!
+    // create the EnigmaMachine here <= maybe CLI interface later
     TranslationLayer translationLayer = new TranslationLayer();
     EnigmaMachine enigmaMachine = new EnigmaMachine(26);
 

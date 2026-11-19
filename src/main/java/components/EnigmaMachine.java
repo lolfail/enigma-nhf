@@ -3,6 +3,8 @@ package components;
 import components.RotorCompartment;
 import utils.PairMap;
 import utils.SelfMap;
+import validators.PlugboardValidator;
+import validators.Validator;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -16,6 +18,8 @@ public class EnigmaMachine {
   private RotorCompartment rotors;
   private SelfMap<Integer> plugboard;
 
+  private Validator<SelfMap<Integer>> plugboardValidator;
+
   private Map<Integer, Integer> identityMapping() {
     Map<Integer, Integer> wiring = new HashMap<>();
     for (int i = 0; i < numContactPoints; i++)
@@ -27,9 +31,17 @@ public class EnigmaMachine {
     this.numContactPoints = numContactPoints;
     this.rotors = new RotorCompartment(numContactPoints);
     this.plugboard = new SelfMap<>(true);
+    this.plugboardValidator = new PlugboardValidator(this.numContactPoints);
 
     // prefill with default wiring
     this.plugboard.putAll(identityMapping());
+  }
+
+  public void shallowCopyInternals(EnigmaMachine other) {
+    this.numContactPoints = other.numContactPoints;
+    this.plugboard = other.plugboard;
+    this.rotors = other.rotors;
+    this.plugboardValidator = other.plugboardValidator;
   }
 
   public int getNumContactPoints() {
@@ -96,8 +108,12 @@ public class EnigmaMachine {
     return plugboard;
   }
   public void setPlugboard(SelfMap<Integer> plugboard) {
-    // TODO! this may be filled out with identity
-    // validate it!
+    for (int i = 0; i < numContactPoints; i++) {
+      if (!plugboard.containsKey(i))
+        plugboard.put(i, i);
+    }
+
+    plugboardValidator.validate(plugboard);
     this.plugboard = plugboard;
   }
 }
