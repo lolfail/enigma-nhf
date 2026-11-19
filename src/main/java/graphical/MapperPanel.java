@@ -6,10 +6,7 @@ import components.TranslationLayer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;

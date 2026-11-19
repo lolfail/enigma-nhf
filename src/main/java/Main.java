@@ -6,6 +6,8 @@ import utils.SelfMap;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import graphical.MainFrame;
 import javax.swing.SwingUtilities;
@@ -27,6 +29,7 @@ public class Main {
   public static void main(String args[]) {
     // create the EnigmaMachine here <= maybe CLI interface later
     TranslationLayer translationLayer = new TranslationLayer();
+    List<Character> ignoredChars = List.of(' ', '\n');
     EnigmaMachine enigmaMachine = new EnigmaMachine(26);
 
     enigmaMachine.setNumRotors(3);
@@ -36,7 +39,7 @@ public class Main {
     enigmaMachine.setPlugboard(new SelfMap<>(true, identityMapping(26)));
 
     SwingUtilities.invokeLater(() -> {
-      MainFrame frame = new MainFrame(enigmaMachine, translationLayer);
+      MainFrame frame = new MainFrame(enigmaMachine, translationLayer, ignoredChars);
       frame.setVisible(true);
     });
   }

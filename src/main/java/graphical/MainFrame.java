@@ -7,14 +7,7 @@ import graphical.CryptoPanel;
 import graphical.RotorPanel;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Container;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -25,6 +18,8 @@ import utils.SelfMap;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+
 import java.util.function.Supplier;
 
 // reason for this is that CardLayout keeps every view in memory
@@ -73,7 +68,7 @@ class LazyCardPanel extends JPanel {
 }
 
 public class MainFrame extends JFrame {
-  public MainFrame(EnigmaMachine enigmaMachine, TranslationLayer translationLayer) {
+  public MainFrame(EnigmaMachine enigmaMachine, TranslationLayer translationLayer, List<Character> ignoredChars) {
     setTitle("Configurable Enigma Simulator");
     setSize(800, 600);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +76,7 @@ public class MainFrame extends JFrame {
 
     LazyCardPanel lazyCardPanel = new LazyCardPanel();
     lazyCardPanel.registerView("CRYPTO", () ->
-        new CryptoPanel(enigmaMachine, translationLayer));
+        new CryptoPanel(enigmaMachine, translationLayer, ignoredChars));
     lazyCardPanel.registerView("REFLECTOR", () ->
         new MapperPanel<SelfMap<Integer>>(translationLayer, enigmaMachine::setReflector, enigmaMachine::getReflector));
     lazyCardPanel.registerView("PLUGBOARD", () ->

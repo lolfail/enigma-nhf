@@ -1,7 +1,5 @@
 package components;
 
-import java.util.Map;
-
 import utils.PairMap;
 import utils.SelfMap;
 

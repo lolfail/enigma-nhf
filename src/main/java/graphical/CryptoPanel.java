@@ -3,6 +3,8 @@ package graphical;
 import components.EnigmaMachine;
 import components.TranslationLayer;
 
+import java.util.List;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
@@ -11,12 +13,12 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import java.awt.event.ActionEvent;
 
 public class CryptoPanel extends JPanel {
   private EnigmaMachine enigmaMachine;
   private TranslationLayer translationLayer;
+  private List<Character> ignoredChars;
 
   private JTextArea inputTextArea;
   private JTextArea outputTextArea;
@@ -28,7 +30,10 @@ public class CryptoPanel extends JPanel {
     StringBuilder outputBuilder = new StringBuilder();
 
     for (char ch : input.toCharArray()) {
-      // TODO! passthough newlines
+      if (ignoredChars.contains(ch)) {
+        outputBuilder.append(ch);
+        continue;
+      }
       int rawInput = translationLayer.charToInt(ch);
       int rawOutput = enigmaMachine.passThrough(rawInput);
       char output = translationLayer.intToChar(rawOutput);
@@ -38,9 +43,10 @@ public class CryptoPanel extends JPanel {
     outputTextArea.setText(outputBuilder.toString());
   }
 
-  public CryptoPanel(EnigmaMachine enigmaMachine, TranslationLayer translationLayer) {
+  public CryptoPanel(EnigmaMachine enigmaMachine, TranslationLayer translationLayer, List<Character> ignoredChars) {
     this.enigmaMachine = enigmaMachine;
     this.translationLayer = translationLayer;
+    this.ignoredChars = ignoredChars;
 
     setLayout(new BorderLayout());
 
