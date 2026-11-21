@@ -65,7 +65,7 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
 
     String[] pairs = text.split(" ");
     if (pairs.length == 1 && pairs[0].equals(""))
-      pairs = new String[0]; // if empty split would still make: [""]
+      pairs = new String[0]; // if empty, split would still make: [""]
 
     for (String pair : pairs) {
       if (pair.length() != 2)

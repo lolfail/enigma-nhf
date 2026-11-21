@@ -5,6 +5,7 @@ import graphical.MapperPanel;
 import utils.PairMap;
 
 import components.EnigmaMachine;
+import components.Rotor;
 import components.TranslationLayer;
 
 import java.util.function.Consumer;
@@ -18,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
 import javax.swing.SwingUtilities;
@@ -30,7 +30,35 @@ import java.awt.GridLayout;
 import java.awt.Dialog;
 import javax.swing.JDialog;
 
-// This level of indentation of inner classes seemed like a good idea at the time...
+class RotorComboBox extends JComboBox<Character> {
+  private TranslationLayer translationLayer;
+  private Consumer<Integer> selectedIndexSetter;
+  private Supplier<Integer> startIndexGetter;
+
+  private void handleSelection(ActionEvent e) {
+    Character selected = (Character) getSelectedItem();
+    if (selected == null)
+      return;
+
+    int position = translationLayer.charToInt(selected);
+    selectedIndexSetter.accept(position);
+  }
+
+  public RotorComboBox(TranslationLayer translationLayer, Consumer<Integer> selectedIndexSetter, Supplier<Integer> startIndexGetter) {
+    this.translationLayer = translationLayer;
+    this.selectedIndexSetter = selectedIndexSetter;
+    this.startIndexGetter = startIndexGetter;
+
+    for (char ch : translationLayer.getDictionary().keySet())
+      addItem(ch);
+
+    char defaultSelection = translationLayer.intToChar(startIndexGetter.get());
+    setSelectedItem(defaultSelection);
+
+    addActionListener(this::handleSelection);
+  }
+}
+
 public class RotorPanel extends JPanel {
   private int rows = 5;
   private int cols = 4;
@@ -42,91 +70,72 @@ public class RotorPanel extends JPanel {
 
   private void redrawManagedRotorsPanel() {
     remove(managedRotorsPanel);
-    managedRotorsPanel = new RotorConfigPanel(enigmaMachine, translationLayer);
+    managedRotorsPanel = constructRotorConfigPanel();
     add(managedRotorsPanel);
     revalidate();
     repaint();
   }
 
-  private class RotorNumConfigPanel extends JPanel {
-    public RotorNumConfigPanel() {
-      SpinnerNumberModel rotorNumSpinnerModel = new SpinnerNumberModel(enigmaMachine.getNumRotors(), 1, rows * cols, 1);
-      JSpinner rotorNumSpinner = new JSpinner(rotorNumSpinnerModel);
+  // construct a panel for rotor #rotorIndex to configure it
+  private JPanel constructRotorConfigEntry(int rotorIndex) {
+    JPanel rotorEntryPanel = new JPanel();
 
-      JButton commitRotorNumButton = new JButton(new AbstractAction("Ok") {
-        public void actionPerformed(ActionEvent e) {
-          int value = (Integer) rotorNumSpinner.getValue();
-          enigmaMachine.setNumRotors(value);
-          redrawManagedRotorsPanel();
-        }
-      });
+    rotorEntryPanel.add(new JLabel("Rotor #" + (rotorIndex + 1)));
+    rotorEntryPanel.add(new RotorComboBox(translationLayer,
+      (Integer position) -> enigmaMachine.setStartingPosition(rotorIndex, position),
+      () -> enigmaMachine.getStartingPosition(rotorIndex))
+    );
 
-      add(rotorNumSpinner);
-      add(commitRotorNumButton);
-    }
+    JButton configButton = new JButton("Configure");
+    configButton.addActionListener(e -> {
+      JDialog dialog = new JDialog(parentWindow, "Rotor Configuration", Dialog.ModalityType.APPLICATION_MODAL);
+      dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+      JPanel content = new MapperPanel<>(translationLayer,
+        (PairMap<Integer, Integer> map) -> enigmaMachine.setWiring(rotorIndex, map),
+        () -> enigmaMachine.getWiring(rotorIndex)
+      );
+      dialog.setContentPane(content);
+
+      dialog.pack();
+      dialog.setLocationRelativeTo(parentWindow);
+      dialog.setVisible(true);
+    });
+    rotorEntryPanel.add(configButton);
+
+    return rotorEntryPanel;
   }
 
-  private class RotorConfigPanel extends JPanel {
-    EnigmaMachine enigmaMachine;
-    TranslationLayer translationLayer;
+  // construct the panel holding each individual rotor's config panels
+  private JPanel constructRotorConfigPanel() {
+    JPanel rotorConfigPanel = new JPanel();
+    rotorConfigPanel.setLayout(new GridLayout(rows, cols));
 
-    private class RotorConfigEntry extends JPanel {
-      private int rotorIndex;
-
-      private class RotorComboBox extends JComboBox<Character> {
-        public RotorComboBox() {
-          for (char ch : translationLayer.getDictionary().keySet())
-            addItem(ch);
-
-          char defaultSelection = translationLayer.intToChar(enigmaMachine.getStartingPosition(rotorIndex));
-          setSelectedItem(defaultSelection);
-
-          addActionListener(e -> {
-            Character selected = (Character) getSelectedItem();
-            if (selected == null)
-              return;
-
-            int position = translationLayer.charToInt(selected);
-            enigmaMachine.setStartingPosition(rotorIndex, position);
-          });
-        }
-      }
-
-      public RotorConfigEntry(int rotorIndex) {
-        this.rotorIndex = rotorIndex;
-
-        Consumer<PairMap<Integer, Integer>> consumer = (PairMap<Integer, Integer> map) -> enigmaMachine
-            .setWiring(rotorIndex, map);
-        Supplier<PairMap<Integer, Integer>> supplier = () -> enigmaMachine.getWiring(rotorIndex);
-
-        add(new JLabel("Rotor #" + rotorIndex));
-        add(new RotorComboBox());
-        add(new JButton(new AbstractAction("Configure") {
-          public void actionPerformed(ActionEvent e) {
-            JDialog dialog = new JDialog(parentWindow, "Rotor Configuration", Dialog.ModalityType.APPLICATION_MODAL);
-            dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-            JPanel content = new MapperPanel<>(translationLayer, consumer, supplier);
-            dialog.setContentPane(content);
-
-            dialog.pack();
-            dialog.setLocationRelativeTo(parentWindow);
-            dialog.setVisible(true);
-          }
-        }));
-      }
+    for (int i = 0; i < enigmaMachine.getNumRotors(); i++) {
+      rotorConfigPanel.add(constructRotorConfigEntry(i));
     }
 
-    public RotorConfigPanel(EnigmaMachine enigmaMachine, TranslationLayer translationLayer) {
-      this.enigmaMachine = enigmaMachine;
-      this.translationLayer = translationLayer;
+    return rotorConfigPanel;
+  }
 
-      setLayout(new GridLayout(rows, cols));
+  // construct the spinner to set number of rotors in machine
+  private JPanel constructRotorNumConfigPanel() {
+    JPanel rotorNumConfigPanel = new JPanel();
 
-      for (int i = 0; i < enigmaMachine.getNumRotors(); i++) {
-        add(new RotorConfigEntry(i));
-      }
-    }
+    SpinnerNumberModel rotorNumSpinnerModel = new SpinnerNumberModel(enigmaMachine.getNumRotors(), 1, rows * cols, 1);
+    JSpinner rotorNumSpinner = new JSpinner(rotorNumSpinnerModel);
+
+    JButton commitRotorNumButton = new JButton("Ok");
+    commitRotorNumButton.addActionListener((ActionEvent e) -> {
+      int value = (Integer) rotorNumSpinner.getValue();
+      enigmaMachine.setNumRotors(value);
+      redrawManagedRotorsPanel();
+    });
+
+    rotorNumConfigPanel.add(rotorNumSpinner);
+    rotorNumConfigPanel.add(commitRotorNumButton);
+
+    return rotorNumConfigPanel;
   }
 
   public RotorPanel(EnigmaMachine enigmaMachine, TranslationLayer translationLayer) {
@@ -135,8 +144,8 @@ public class RotorPanel extends JPanel {
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-    RotorNumConfigPanel rotorNumConfigPanel = new RotorNumConfigPanel();
-    this.managedRotorsPanel = new RotorConfigPanel(enigmaMachine, translationLayer);
+    JPanel rotorNumConfigPanel = constructRotorNumConfigPanel();
+    this.managedRotorsPanel = constructRotorConfigPanel();
 
     add(rotorNumConfigPanel);
     add(managedRotorsPanel);

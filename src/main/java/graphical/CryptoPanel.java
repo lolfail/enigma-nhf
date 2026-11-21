@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
 public class CryptoPanel extends JPanel {
@@ -23,7 +22,7 @@ public class CryptoPanel extends JPanel {
   private JTextArea inputTextArea;
   private JTextArea outputTextArea;
 
-  private void updateOutputTextArea() {
+  private void handleCryptButtonPress(ActionEvent e) {
     enigmaMachine.reset();
 
     String input = inputTextArea.getText();
@@ -60,11 +59,8 @@ public class CryptoPanel extends JPanel {
     vsplitPane.add(inputTextArea);
     vsplitPane.add(outputTextArea);
 
-    JButton encrypt = new JButton(new AbstractAction("OK") {
-      public void actionPerformed(ActionEvent e) {
-        updateOutputTextArea();
-      }
-    });
+    JButton encrypt = new JButton("Ok");
+    encrypt.addActionListener(this::handleCryptButtonPress);
 
     add(vsplitPane, BorderLayout.CENTER);
     add(encrypt, BorderLayout.SOUTH);
