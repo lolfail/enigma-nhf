@@ -9,9 +9,13 @@ import validators.Validator;
 import java.util.Map;
 import java.util.HashMap;
 
-// high level obfuscation layer
-// user must not talk with underlying rotor objects! 
-// instead provide methods to set them through those
+/**
+ * The Enigma Machine that users are encouraged to use.
+ * Not only is this the "first" class that uses the plugboard,
+ * but also provides a high level way of interfacing with the components.
+ * This is both for simplified methods (not having overly long getter chains),
+ * but also for additional optional validation of arguments (even though most objects will handle those at the lowest level).
+ */
 public class EnigmaMachine {
   private int numContactPoints;
 
@@ -20,6 +24,10 @@ public class EnigmaMachine {
 
   private Validator<SelfMap<Integer>> plugboardValidator;
 
+  /**
+   * Get a map who maps number from [0, numContactPoints) (in i to i) fashion.
+   * @return The map.
+   */
   private Map<Integer, Integer> identityMapping() {
     Map<Integer, Integer> wiring = new HashMap<>();
     for (int i = 0; i < numContactPoints; i++)

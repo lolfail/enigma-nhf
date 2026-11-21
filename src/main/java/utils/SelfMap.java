@@ -6,6 +6,14 @@ import java.util.Set;
 
 import utils.PairMap;
 
+/**
+ * A generic utility class to implement a mapping, in which values map to themselves.
+ * This is useful to implement plugboard-like logic, where a number of elements may be associated together exclusively.
+ * The exclusive part is important, this means that: if a is mapped to b, b can not be mapped to c.
+ *
+ * The class supports (during construction only) "identity" mappings, where the user can map values to themselves.
+ * If disabled, no value can map to itself.
+ */
 public class SelfMap<T> implements Map<T, T> {
   private PairMap<T, T> pairings;
 
@@ -30,8 +38,9 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Get whether {@link #identityMappings} are allowed.
+   * @return Whether the object was constructed with allowing identity mappings.
    *
-   * @implNote This acts as a getter. There is no setter, because this is too much of a core property.
+   * @implNote This acts as a getter. There is no setter, because this is too much of a core property to change on the fly.
    */
   public boolean areIdentityMappingsAllowed() {
     return identityMappings;
@@ -39,6 +48,7 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Get whether there are no mappings.
+   * @return True if there are no mappings.
    */
   public boolean isEmpty() {
     return pairings.isEmpty();
@@ -53,6 +63,9 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Get the number of mappings.
+   * @return The number (count) of mappings / associations.
+   *
+   * Will count mappings to self <=> identity mappings.
    */
   public int size() {
     return pairings.size();
@@ -60,6 +73,8 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Add a new mapping between the two parameters.
+   * @param a Parameter of the first (as in genericity order) type.
+   * @param b Parameter of the second (as in genericity order) type.
    * @return the second parameter's overwritten value, otherwise null
    *
    * If {@link #identityMappings} is set, it will allow (a - a), self mappings.
@@ -67,13 +82,15 @@ public class SelfMap<T> implements Map<T, T> {
    */
   public T put(T a, T b) {
     if (!identityMappings && a.equals(b))
-      return null; // shortcircuit -- exception should be preferred...
+      return null; // shortcircuit
     else
       return pairings.put(a, b);
   }
 
   /**
    * Gets the pair of whatever is mapped to the parameter, or null.
+   * @param t An Object who may or may not be in the store.
+   * @return The value associated with the parameter, or null if not found.
    */
   public T get(Object t) {
     T forward = pairings.get(t);
@@ -89,7 +106,9 @@ public class SelfMap<T> implements Map<T, T> {
   }
 
   /**
-   * Deletes the pair, who contains the parameter.
+   * Deletes the pair, who contains the parameter, and returns the value mapped to it.
+   * @param t Who to search for in the store.
+   * @return The pair of whoever the parameter was mapped to, or null if not mapped.
    */
   public T remove(Object t) {
     T forward = pairings.remove(t);
@@ -103,6 +122,7 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Returns whether the parameter is mapped to anything.
+   * @return True if there exists a mapping to the parameter.
    */
   public boolean containsKey(Object key) {
     T got = this.get(key);
@@ -126,6 +146,7 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Returns a set of all mapped things.
+   * @return A set of all keys, that are mapped.
    */
   public Set<T> keySet() {
     Set<T> set = new HashSet<>();
@@ -143,6 +164,7 @@ public class SelfMap<T> implements Map<T, T> {
 
   /**
    * Put everything from the parameter into self.
+   * @param map The map to use as the source.
    */
   public void putAll(Map<? extends T, ? extends T> map) {
     pairings.putAll(map);
