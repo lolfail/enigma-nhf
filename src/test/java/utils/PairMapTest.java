@@ -27,7 +27,7 @@ class PairMapTest {
     assertEquals(0, map.size());
   }
 
-  @Test
+  @Test 
   void increasedSize() {
     map.put(1, "a");
 
@@ -35,13 +35,21 @@ class PairMapTest {
     assertEquals(1, map.size());
   }
 
-  @Test
+  @Test 
   void canClear() {
     map.put(1, "a");
 
     map.clear();
     assertTrue(map.isEmpty());
     assertEquals(0, map.size());
+  }
+
+  @Test 
+  void mapConstructor() {
+    Map<Integer, String> reference = Map.of(1, "a", 2, "b");
+    map = new PairMap<>(reference);
+    for (Integer key : reference.keySet())
+      assertEquals(reference.get(key), map.get(key));
   }
   /// }}}
 
@@ -52,7 +60,7 @@ class PairMapTest {
     assertNull(map.getReverse("a"));
   }
 
-  @Test
+  @Test 
   void canGetPut() {
     map.put(1, "a");
 
@@ -60,7 +68,7 @@ class PairMapTest {
     assertEquals(1, map.getReverse("a"));
   }
 
-  @Test
+  @Test 
   void canGetPutReverse() {
     map.putReverse("a", 1);
 

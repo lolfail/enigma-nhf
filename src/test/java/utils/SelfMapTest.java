@@ -43,6 +43,14 @@ class SelfMapTest {
     assertTrue(map.isEmpty());
     assertEquals(0, map.size());
   }
+
+  @Test 
+  void mapConstructor() {
+    Map<Integer, Integer> reference = Map.of(1,2, 3,4);
+    map = new SelfMap<>(reference);
+    for (Integer key : reference.keySet())
+      assertEquals(reference.get(key), map.get(key));
+  }
   // }}}
 
   // {{{ GETTING, PUTTING, REMOVING
@@ -123,9 +131,46 @@ class SelfMapTest {
     assertEquals(allKeyValues, map.keySet());
     assertEquals(allKeyValues, map.values());
   }
+
+  @Test 
+  void entrySet() {
+    map.put(1, 2);
+    map.put(3, 4);
+
+    assertEquals(
+      Set.of(Map.entry(1, 2), Map.entry(3, 4)),
+      map.entrySet()
+    );
+  }
   // }}}
 
   // {{{ IDENTITY MAPPING SPECIFIC
+  @Test 
+  void identityWithMapConstructor() {
+    Map<Integer, Integer> reference = Map.of(1,1, 2,2);
+
+    assertThrows(RuntimeException.class, () -> {
+      map = new SelfMap<>(false, reference);
+    });
+
+    map = new SelfMap<>(true, reference);
+    for (Integer key : reference.keySet())
+      assertEquals(reference.get(key), map.get(key));
+  }
+
+  @Test 
+  void nonIdentityWithMapConstructor() {
+    Map<Integer, Integer> reference = Map.of(1,2, 3,4);
+
+    map = new SelfMap<>(true, reference);
+    for (Integer key : reference.keySet())
+      assertEquals(reference.get(key), map.get(key));
+
+    map = new SelfMap<>(false, reference);
+    for (Integer key : reference.keySet())
+      assertEquals(reference.get(key), map.get(key));
+  }
+
   @Test
   void getIdentity() {
     map = new SelfMap<>(false);

@@ -24,16 +24,26 @@ public class SelfMap<T> implements Map<T, T> {
     this.pairings = new PairMap<>();
     // this(true);
   }
+  public SelfMap(boolean identityMappings) {
+    this.identityMappings = identityMappings;
+    this.pairings = new PairMap<>();
+  }
+
+  private boolean containsIdentity(Map<T,T> map) {
+    for (T key : map.keySet())
+      if (key.equals(map.get(key)))
+        return true;
+    return false;
+  }
+
   public SelfMap(Map<T,T> map) {
     this.pairings = new PairMap<>(map);
   }
   public SelfMap(boolean identityMappings, Map<T,T> map) {
     this.identityMappings = identityMappings;
+    if (!identityMappings && containsIdentity(map))
+      throw new RuntimeException("Identity mappings was off, yet source map contained some.");
     this.pairings = new PairMap<>(map);
-  }
-  public SelfMap(boolean identityMappings) {
-    this.identityMappings = identityMappings;
-    this.pairings = new PairMap<>();
   }
 
   /**
