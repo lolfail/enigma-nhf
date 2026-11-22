@@ -5,7 +5,6 @@ import utils.PairMap;
 import utils.SelfMap;
 
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -35,9 +35,16 @@ class RotorTest {
   }
 
   @Test 
-  void contactPointGetSet() {
+  void startingPosition() {
     rotor.setStartingPosition(1);
     assertEquals(1, rotor.getStartingPosition());
+
+    assertThrows(IndexOutOfBoundsException.class, () -> {
+      rotor.setStartingPosition(numContactPoints);
+    });
+    assertThrows(IndexOutOfBoundsException.class, () -> {
+      rotor.setStartingPosition(-1);
+    });
   }
 
   @Test 
@@ -82,6 +89,21 @@ class RotorTest {
 
     rotor.reset();
     assertEquals(0, rotor.getRotationalPosition());
+  }
+
+  @Test 
+  void wiringGetSet() {
+    assertEquals(
+      new PairMap<Integer, Integer>(Map.of(0,0, 1,1)).entrySet(),
+      rotor.getWiring().entrySet()
+    );
+
+    PairMap<Integer, Integer> newWiring = new PairMap<>(Map.of(0,0, 1,1));
+    rotor.setWiring(newWiring);
+    assertEquals(
+      newWiring,
+      rotor.getWiring()
+    );
   }
   // }}}
 
