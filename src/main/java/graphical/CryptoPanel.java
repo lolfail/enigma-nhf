@@ -28,14 +28,21 @@ public class CryptoPanel extends JPanel {
     String input = inputTextArea.getText();
     StringBuilder outputBuilder = new StringBuilder();
 
+    // C style goto cleanup structure could be used for those ifs :(
     for (char ch : input.toCharArray()) {
       if (ignoredChars.contains(ch)) {
         outputBuilder.append(ch);
         continue;
       }
-      int rawInput = translationLayer.charToInt(ch);
-      int rawOutput = enigmaMachine.passThrough(rawInput);
-      char output = translationLayer.intToChar(rawOutput);
+
+      Integer rawInput = translationLayer.charToInt(ch);
+      if (rawInput == null) {
+        outputBuilder.append(ch);
+        continue;
+      }
+
+      Integer rawOutput = enigmaMachine.passThrough(rawInput);
+      Character output = translationLayer.intToChar(rawOutput);
       outputBuilder.append(output);
     }
 

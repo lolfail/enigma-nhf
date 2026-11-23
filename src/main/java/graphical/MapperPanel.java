@@ -33,12 +33,13 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
 
   private void setFailureLabel(String message) {
     feedbackLabel.setText(message);
-    feedbackLabel.setForeground(new Color(0x60, 0x10, 0x0b)); // jam red TODO! not visible enough
+    feedbackLabel.setForeground(new Color(0xd0, 0x31, 0x2d)); // unnamed red :~|
+
   }
   private void setSuccessLabel(Map<Integer, Integer> map) {
     int mappedNum = map.entrySet().size();
     feedbackLabel.setText(mappedNum + " mappings created.");
-    feedbackLabel.setForeground(new Color(0x00, 0x42, 0x25)); // british racing green TODO! not visible enough
+    feedbackLabel.setForeground(new Color(0x4c, 0xbb, 0x17)); // kelly green
     mappingsListPanel.updateMappings(map);
   }
 
@@ -141,7 +142,7 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     gbc.fill = GridBagConstraints.NONE;
     gbc.anchor = GridBagConstraints.NORTH;
     gbc.insets = new Insets(0, 0, 0, 0);
-    JButton okButton = new JButton("Ok"); // via spec there should not be buttons
+    JButton okButton = new JButton("Ok");
     okButton.addActionListener(this::getUpdateHandler);
     add(okButton, gbc);
 
@@ -191,7 +192,6 @@ class MappingsListPanel extends JPanel {
   void updateMappings(Map<Integer, Integer> map) {
     removeAll();
     for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-      // TODO! add borders around it
       char key = translationLayer.intToChar(entry.getKey());
       char value = translationLayer.intToChar(entry.getValue());
 
