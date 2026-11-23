@@ -1,0 +1,20 @@
+@startuml
+skinparam defaultFontName Fira Code
+
+class EnigmaMachine
+class RotorCompartment <<List<Rotor>>>
+class Rotor
+
+class reflector <<SelfMap>>
+class plugboard <<SelfMap>>
+class PairMap
+
+EnigmaMachine *-- RotorCompartment
+RotorCompartment "one" *-- "many" Rotor
+Rotor ..> Rotor
+
+EnigmaMachine *-- plugboard
+RotorCompartment *-- reflector
+Rotor *-- PairMap
+
+@enduml

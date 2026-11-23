@@ -1,0 +1,23 @@
+@startuml
+skinparam defaultFontName Fira Code
+
+
+class CryptoPanel <<JPanel>>
+class RotorPanel <<JPanel>>
+class MapperPanel <<JPanel>>
+class FileMenu <<JMenu>>
+
+class MainFrame <<JFrame>>
+class Main
+
+Main ..> MainFrame
+MainFrame ..> CryptoPanel
+MainFrame ..> RotorPanel
+MainFrame ..> FileMenu
+MainFrame ..> MapperPanel : reflector
+MainFrame ..> MapperPanel : plugboard
+
+RotorPanel ..> MapperPanel : wiring
+
+left to right direction
+@enduml

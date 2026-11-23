@@ -1,18 +1,27 @@
 DOCS_DIR = docs
 OUT_DIR = target
 
-SPEC = spec
-
 .PHONY: all
-all: spec
+all: spec prog
 
+SPEC = spec
 .PHONY: spec
 spec: $(DOCS_DIR)/$(SPEC)/codingwindow.svg $(DOCS_DIR)/$(SPEC)/saveload.svg $(DOCS_DIR)/$(SPEC)/rotorconfig.svg $(DOCS_DIR)/$(SPEC)/plugboardconfig.svg
 	pandoc --resource-path=$(DOCS_DIR)/$(SPEC) \
 		-V lang=hu -V polyglossia-otherlangs="" \
 		-M babel-lang=magyar \
 		-t pdf --pdf-engine=xelatex \
-		-s $(DOCS_DIR)/$(SPEC)/spec.md -o $(OUT_DIR)/$(SPEC).pdf
+		-s $(DOCS_DIR)/$(SPEC)/$(SPEC).md -o $(OUT_DIR)/$(SPEC).pdf
+
+.PHONY: prog
+PROG = prog
+prog: $(DOCS_DIR)/$(PROG)/enigmamodel.svg $(DOCS_DIR)/$(PROG)/utilsmodel.svg $(DOCS_DIR)/$(PROG)/graphicsmodel.svg
+	pandoc --resource-path=$(DOCS_DIR)/$(PROG) \
+		--pdf-engine-opt=-shell-escape \
+		-V lang=hu -V polyglossia-otherlangs="" \
+		-M babel-lang=magyar \
+		-t pdf --pdf-engine=xelatex \
+		-s $(DOCS_DIR)/$(PROG)/$(PROG).md -o $(OUT_DIR)/$(PROG).pdf
 
 %.svg: %.puml
 	plantuml -tsvg $<
@@ -26,3 +35,5 @@ spec: $(DOCS_DIR)/$(SPEC)/codingwindow.svg $(DOCS_DIR)/$(SPEC)/saveload.svg $(DO
 clean:
 	rm -f $(OUT_DIR)/$(SPEC).pdf
 	rm -f $(DOCS_DIR)/$(SPEC)/*.svg
+	rm -f $(OUT_DIR)/$(PROG).pdf
+	rm -f $(DOCS_DIR)/$(PROG)/*.svg

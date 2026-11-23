@@ -1,0 +1,10 @@
+@startuml
+skinparam defaultFontName Fira Code
+
+interface Map
+SelfMap ..|> Map
+PairMap ..|> Map
+
+SelfMap *-- PairMap
+
+@enduml
