@@ -10,7 +10,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.File;
-import java.nio.file.Path;
+import java.nio.file.Files;
+import java.io.OutputStream;
+import java.io.InputStream;
 
 import java.awt.event.ActionEvent;
 
@@ -35,10 +37,8 @@ public class FileMenu extends JMenu {
       return;
 
     File file = chooser.getSelectedFile();
-    Path path = file.toPath();
-
-    try {
-      marshaller.write(path, enigmaMachine);
+    try (OutputStream fileOStream = Files.newOutputStream(file.toPath())) {
+      marshaller.write(fileOStream, enigmaMachine);
     } catch (Exception err) {
       JOptionPane.showConfirmDialog(this.getParent(), err.getMessage());
       System.err.println(err);
@@ -53,10 +53,8 @@ public class FileMenu extends JMenu {
       return;
 
     File file = chooser.getSelectedFile();
-    Path path = file.toPath();
-
-    try {
-      enigmaMachine.shallowCopyInternals(marshaller.read(path));
+    try (InputStream fileIStream = Files.newInputStream(file.toPath())) {
+      enigmaMachine.shallowCopyInternals(marshaller.read(fileIStream));
     } catch (Exception err) {
       JOptionPane.showConfirmDialog(this.getParent(), err.getMessage());
       System.err.println(err);
