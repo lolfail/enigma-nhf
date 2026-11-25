@@ -2,6 +2,9 @@ package validators;
 
 import utils.PairMap;
 
+/**
+ * Validation class enforcing certain rules for the internal wiring of a rotor.
+ */
 public class RotorWiringValidator implements Validator<PairMap<Integer, Integer>> {
   static public class RotorWiringException extends ValidatorException {
     public RotorWiringException(String message) { super(message); }
@@ -13,6 +16,10 @@ public class RotorWiringValidator implements Validator<PairMap<Integer, Integer>
     this.numContactPoints = numContactPoints;
   }
 
+  /**
+   * Validate the internal wiring of a rotor.
+   * @param mapping The mapping to validate.
+   */
   public void validate(PairMap<Integer, Integer> mapping) {
     // is everything mapped from [0, numContactPoints) ?
     for (int i = 0; i < numContactPoints; i++)
