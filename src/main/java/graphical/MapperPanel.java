@@ -1,7 +1,8 @@
 package graphical;
 
-import java.util.Map;
 import components.TranslationLayer;
+
+import java.util.Map;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -22,6 +23,16 @@ import java.awt.Insets;
 import javax.swing.Box;
 import java.awt.Color;
 
+/**
+ * Generic UI element implementing a panel where one can provide characters to be associated together.
+ * Takes a getter / setter through which to update a Map<Integer, Integer>.
+ *
+ * Also will need a {@link TranslationLayer}.
+ * This is to allow those letters to be mapped in varying ways to integers (and vice versa).
+ *
+ * The underlying getter/setter may throw errors.
+ * Those errors will be caught and displayed to the user!
+ */
 public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   private TranslationLayer translationLayer;
   private Consumer<V> consumer;
@@ -31,18 +42,10 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   private JLabel feedbackLabel;
   private MappingsListPanel mappingsListPanel;
 
-  private void setFailureLabel(String message) {
-    feedbackLabel.setText(message);
-    feedbackLabel.setForeground(new Color(0xd0, 0x31, 0x2d)); // unnamed red :~|
-
-  }
-  private void setSuccessLabel(Map<Integer, Integer> map) {
-    int mappedNum = map.entrySet().size();
-    feedbackLabel.setText(mappedNum + " mappings created.");
-    feedbackLabel.setForeground(new Color(0x4c, 0xbb, 0x17)); // kelly green
-    mappingsListPanel.updateMappings(map);
-  }
-
+  /**
+   * Generate the default value of the text field used to map letters together as a String.
+   * @return The default value that may be used to prefill the textfield.
+   */
   private String generateTextFieldDefaults() {
     V mapping = supplier.get();
 
@@ -61,7 +64,13 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     return mapString.toString();
   }
 
+  /**
+   * Parse a String of mappings into the type of our container.
+   * @param text The string of mappings, likely the content of the textfield.
+   * @return The mapping obtained upon successfully parsing it.
+   */
   private V updateMapping(String text) {
+    // Not the cleanest thing, but used to obtain a container of type V we "can" use to put stuff into.
     V mapping = supplier.get();
 
     String[] pairs = text.split(" ");
@@ -88,13 +97,37 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     return mapping;
   }
 
-  private void getUpdateHandler(ActionEvent e) {
+  /**
+   * Update the feedback label below the mapping text field to show just an error message.
+   * @param message The message to show.
+   */
+  private void setFailure(String message) {
+    feedbackLabel.setText(message);
+    feedbackLabel.setForeground(new Color(0xd0, 0x31, 0x2d)); // unnamed red :~|
+  }
+
+  /**
+   * Update the feedback label to show success, as well as populating {@link MappingsListPanel} just below it.
+   * @param map The mappings that could be successfully obtained from the text field.
+   */
+  private void setSuccess(Map<Integer, Integer> map) {
+    int mappedNum = map.entrySet().size();
+    feedbackLabel.setText(mappedNum + " mappings created.");
+    feedbackLabel.setForeground(new Color(0x4c, 0xbb, 0x17)); // kelly green
+    mappingsListPanel.updateMappings(map);
+  }
+
+  /**
+   * Callback / event handler to try updating the state of mappings and tell the user about it.
+   * @param _e Unused ActionEvent.
+   */
+  private void getUpdateHandler(ActionEvent _e) {
     try {
       V updated = updateMapping(mappingTextField.getText());
       consumer.accept(updated);
-      setSuccessLabel(updated);
+      setSuccess(updated);
     } catch (RuntimeException err) {
-      setFailureLabel(err.getMessage());
+      setFailure(err.getMessage());
     }
   }
 
@@ -103,6 +136,7 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
     this.consumer = consumer;
     this.supplier = supplier;
 
+    // GBC is used to ensure a reasonable, not too streched out layout (through spacers).
     setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
 
@@ -179,8 +213,9 @@ public class MapperPanel<V extends Map<Integer, Integer>> extends JPanel {
   }
 }
 
-// translationLayer is passed down instead of giving it a charmap
-// because otherwise constructing a new generic map would be needed
+/**
+ * A panel to show successfully mapped letters in pairs.
+ */
 class MappingsListPanel extends JPanel {
   private TranslationLayer translationLayer;
 
@@ -189,6 +224,10 @@ class MappingsListPanel extends JPanel {
     setLayout(new GridLayout(5, 6));
   }
 
+  /**
+   * Call this to update the pairings shown with entries of the parameter.
+   * @param map The map to use as the source of the new state.
+   */
   void updateMappings(Map<Integer, Integer> map) {
     removeAll();
     for (Map.Entry<Integer, Integer> entry : map.entrySet()) {

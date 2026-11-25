@@ -14,6 +14,12 @@ import javax.swing.JTextArea;
 
 import java.awt.event.ActionEvent;
 
+/**
+ * The view, handling encryption/decryption with an {@link EnigmaMachine}.
+ *
+ * Left panel is for input, right panel for output (not editable).
+ * Click the OK button to handle it.
+ */
 public class CryptoPanel extends JPanel {
   private EnigmaMachine enigmaMachine;
   private TranslationLayer translationLayer;
@@ -22,7 +28,11 @@ public class CryptoPanel extends JPanel {
   private JTextArea inputTextArea;
   private JTextArea outputTextArea;
 
-  private void handleCryptButtonPress(ActionEvent e) {
+  /**
+   * Callback / event handler to run the cryptographic functions.
+   * @param _e Unused.
+   */
+  private void handleCryptButtonPress(ActionEvent _e) {
     enigmaMachine.reset();
 
     String input = inputTextArea.getText();
@@ -57,7 +67,7 @@ public class CryptoPanel extends JPanel {
     setLayout(new BorderLayout());
 
     JSplitPane vsplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    vsplitPane.setResizeWeight(0.5); // set to middle split default
+    vsplitPane.setResizeWeight(0.5); // set to middle be at the middle by default
 
     this.inputTextArea = new JTextArea();
     this.outputTextArea = new JTextArea();

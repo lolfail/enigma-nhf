@@ -16,10 +16,19 @@ import java.io.InputStream;
 
 import java.awt.event.ActionEvent;
 
+/**
+ * A group of menu items for saving / loading the {@link EnigmaMachine}.
+ * Utilizes {@link EnigmaMarshaller} for XML backup.
+ */
 public class FileMenu extends JMenu {
   private EnigmaMarshaller marshaller;
   private EnigmaMachine enigmaMachine;
 
+  /**
+   * Helper to construct a file chooser prompt with proper settings.
+   * @param title The title to use for it's popup.
+   * @return The file chooser that was constructed.
+   */
   private JFileChooser createChooser(String title) {
     FileNameExtensionFilter filter = new FileNameExtensionFilter("XML configuration files", "xml");
 
@@ -29,7 +38,11 @@ public class FileMenu extends JMenu {
     return chooser;
   }
 
-  private void save(ActionEvent e) {
+  /**
+   * Callback / handler for saving (exporting) the configuration.
+   * @param _e Unused.
+   */
+  private void save(ActionEvent _e) {
     JFileChooser chooser = createChooser("Save Configuration");
 
     int returnVal = chooser.showSaveDialog(this.getParent());
@@ -45,7 +58,11 @@ public class FileMenu extends JMenu {
     }
   }
 
-  private void load(ActionEvent e) {
+  /**
+   * Callback / handler for loading (importing) the configuration.
+   * @param _e Unused.
+   */
+  private void load(ActionEvent _e) {
     JFileChooser chooser = createChooser("Load Configuration");
 
     int returnVal = chooser.showSaveDialog(this.getParent());

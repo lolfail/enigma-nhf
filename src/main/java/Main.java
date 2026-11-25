@@ -1,24 +1,26 @@
 import components.EnigmaMachine;
 import components.TranslationLayer;
 
-import utils.PairMap;
 import utils.SelfMap;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 
 import graphical.MainFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * The good old boilerplate stuff :)
+ */
 public class Main {
-  private static Map<Integer, Integer> identityMapping(int count) {
-    Map<Integer, Integer> map = new HashMap<>();
-    for (int i = 0; i < count; i++)
-      map.put(i, i);
-    return map;
-  }
+  /**
+   * Yield a Map containing entries: (0,1), (2,3) ... (param-2, param-1).
+   * @param count How far to go with these mappings.
+   * @return The mapping backed by a HashMap
+   *
+   * Simple helper to prefill the default {@link EnigmaMachine}'s reflector on creation.
+   */
   private static Map<Integer, Integer> shiftMapping(int count) {
     Map<Integer, Integer> map = new HashMap<>();
     for (int i = 0; i < count-1; i+=2)
@@ -26,17 +28,17 @@ public class Main {
     return map;
   }
 
-  public static void main(String args[]) {
+  /**
+   * Entrypoint for the program.
+   */
+  public static void main() {
     // create the EnigmaMachine here <= maybe CLI interface later
     TranslationLayer translationLayer = new TranslationLayer();
     List<Character> ignoredChars = List.of(' ', '\n');
+
     EnigmaMachine enigmaMachine = new EnigmaMachine(26);
-
     enigmaMachine.setNumRotors(3);
-
     enigmaMachine.setReflector(new SelfMap<>(false, shiftMapping(26)));
-
-    enigmaMachine.setPlugboard(new SelfMap<>(true, identityMapping(26)));
 
     SwingUtilities.invokeLater(() -> {
       MainFrame frame = new MainFrame(enigmaMachine, translationLayer, ignoredChars);
