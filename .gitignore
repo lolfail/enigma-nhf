@@ -3,3 +3,12 @@
 .settings
 
 target/
+
+docs/prog/enigmamodel.svg
+docs/prog/graphicsmodel.svg
+docs/prog/utilsmodel.svg
+docs/spec/codingwindow.svg
+docs/spec/plugboardconfig.svg
+docs/spec/rotorconfig.svg
+docs/spec/saveload.svg
+svg-inkscape/

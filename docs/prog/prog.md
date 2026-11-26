@@ -60,6 +60,24 @@ Emellett [_JaCoCo_](https://www.eclemma.org/jacoco/trunk/doc/maven.html) van int
 
 Ez elérhető a projektkönyvtárból: `./target/site/jacoco/index.html`, és a teszteléshez használt parancs futtatása után generálódik.
 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.46\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./utilscoverage.png}
+  \caption{\texttt{util} osztályok lefedettsége.}
+  \label{fig:utils-jacoco}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.46\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./componentscoverage.png}
+  \caption{\texttt{components} osztályok lefedettsége.}
+  \label{fig:components-jacoco}
+\end{subfigure}
+\caption{A JaCoCo lefedettségi méréseinek kimenete.}
+\label{fig:jacoco-codecov}
+\end{figure}
+
 ## Dokumentálás
 
 A dokumentáció három részre bomlik:
@@ -71,14 +89,30 @@ A dokumentáció három részre bomlik:
 ### Programozói és felhasználói dokumentációk
 
 Ezekhez elsősorban a [pandoc](https://pandoc.org/) nevű programot használjuk, mely alkalmas arra, hogy markdown dokumentumot (esetlegesen kis LaTeX szintaxissal kiegészítve) PDF formátumba generáljon.
-<!-- TODO! -->
+
+Mivel ez a fajta dokumentációkészítés kifejezetten elszigetelt, nem szükséges hozzá a Maven (és annak overhead-je).
+Ezek a fajta dokumentációk "build"-elhetők (`prog`, `user` és `spec` targeteket mind célozza az `all`):
+
+```sh
+make all
+```
 
 ### Programkód dokumentációja
 
 Ehhez használjunk _JavaDoc_ stílusú kommenteket. Igyekezzünk jellemezni az összes paramétert és a visszatérési értéket minden esetben.
-<!-- TODO! -->
 
-# Projekt struktúrája
+Egy valós példa a kódbázisból erre:
+
+```java
+  /**
+   * Get what pin is associated with the provided pin.
+   * @param forwardPinAbsolute The absolute pin number as an "input".
+   * @return The associated "output" absolute pin number.
+   */
+  public int forwardPass(int forwardPinAbsolute) { /* ... */ }
+```
+
+# Projekt struktúrája és a kódbázis
 
 A projekt a Maven konvenciót követi, a forráskód az `src` directory-ba kerül, azon belül a `main`-be maga az alkalmazásé, `test`-en belülre pedig a teszteléshez használt kód:
 
