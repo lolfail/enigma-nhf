@@ -5,12 +5,15 @@ import components.TranslationLayer;
 
 import java.util.List;
 
+import java.awt.Dimension;
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionEvent;
 
@@ -66,15 +69,34 @@ public class CryptoPanel extends JPanel {
 
     setLayout(new BorderLayout());
 
-    JSplitPane vsplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    vsplitPane.setResizeWeight(0.5); // set to middle be at the middle by default
-
     this.inputTextArea = new JTextArea();
+    inputTextArea.setEditable(true);
+    inputTextArea.setLineWrap(true);
+    inputTextArea.setWrapStyleWord(true);
+
     this.outputTextArea = new JTextArea();
     outputTextArea.setEditable(false);
+    outputTextArea.setLineWrap(true);
+    outputTextArea.setWrapStyleWord(true);
 
-    vsplitPane.add(inputTextArea);
-    vsplitPane.add(outputTextArea);
+    JScrollPane inputScroller = new JScrollPane(
+        inputTextArea,
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+    );
+    JScrollPane outputScroller = new JScrollPane(
+        outputTextArea,
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+    );
+    inputScroller.setMinimumSize(new Dimension(0, 0));
+    outputScroller.setMinimumSize(new Dimension(0, 0));
+
+    JSplitPane vsplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inputScroller, outputScroller);
+    vsplitPane.setResizeWeight(0.5);
+    vsplitPane.setContinuousLayout(true);
+    vsplitPane.setOneTouchExpandable(true);
+    SwingUtilities.invokeLater(() -> vsplitPane.setDividerLocation(0.5));
 
     JButton encrypt = new JButton("Ok");
     encrypt.addActionListener(this::handleCryptButtonPress);
