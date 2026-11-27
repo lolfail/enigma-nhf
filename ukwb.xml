@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<EnigmaMachine alphabet="26">
+  <Plugboard/>
+  <Rotors>
+    <Rotor position="1">
+      <Mapping from="1" to="5"/>
+      <Mapping from="2" to="11"/>
+      <Mapping from="3" to="13"/>
+      <Mapping from="4" to="6"/>
+      <Mapping from="5" to="12"/>
+      <Mapping from="6" to="7"/>
+      <Mapping from="7" to="4"/>
+      <Mapping from="8" to="17"/>
+      <Mapping from="9" to="22"/>
+      <Mapping from="10" to="26"/>
+      <Mapping from="11" to="14"/>
+      <Mapping from="12" to="20"/>
+      <Mapping from="13" to="15"/>
+      <Mapping from="14" to="23"/>
+      <Mapping from="15" to="25"/>
+      <Mapping from="16" to="8"/>
+      <Mapping from="17" to="24"/>
+      <Mapping from="18" to="21"/>
+      <Mapping from="19" to="19"/>
+      <Mapping from="20" to="16"/>
+      <Mapping from="21" to="1"/>
+      <Mapping from="22" to="9"/>
+      <Mapping from="23" to="2"/>
+      <Mapping from="24" to="18"/>
+      <Mapping from="25" to="3"/>
+      <Mapping from="26" to="10"/>
+    </Rotor>
+    <Rotor position="2">
+      <Mapping from="1" to="1"/>
+      <Mapping from="2" to="10"/>
+      <Mapping from="3" to="4"/>
+      <Mapping from="4" to="11"/>
+      <Mapping from="5" to="19"/>
+      <Mapping from="6" to="9"/>
+      <Mapping from="7" to="18"/>
+      <Mapping from="8" to="21"/>
+      <Mapping from="9" to="24"/>
+      <Mapping from="10" to="2"/>
+      <Mapping from="11" to="12"/>
+      <Mapping from="12" to="8"/>
+      <Mapping from="13" to="23"/>
+      <Mapping from="14" to="20"/>
+      <Mapping from="15" to="13"/>
+      <Mapping from="16" to="3"/>
+      <Mapping from="17" to="17"/>
+      <Mapping from="18" to="7"/>
+      <Mapping from="19" to="26"/>
+      <Mapping from="20" to="14"/>
+      <Mapping from="21" to="16"/>
+      <Mapping from="22" to="25"/>
+      <Mapping from="23" to="6"/>
+      <Mapping from="24" to="22"/>
+      <Mapping from="25" to="15"/>
+      <Mapping from="26" to="5"/>
+    </Rotor>
+    <Rotor position="3">
+      <Mapping from="1" to="2"/>
+      <Mapping from="2" to="4"/>
+      <Mapping from="3" to="6"/>
+      <Mapping from="4" to="8"/>
+      <Mapping from="5" to="10"/>
+      <Mapping from="6" to="12"/>
+      <Mapping from="7" to="3"/>
+      <Mapping from="8" to="16"/>
+      <Mapping from="9" to="18"/>
+      <Mapping from="10" to="20"/>
+      <Mapping from="11" to="24"/>
+      <Mapping from="12" to="22"/>
+      <Mapping from="13" to="26"/>
+      <Mapping from="14" to="14"/>
+      <Mapping from="15" to="25"/>
+      <Mapping from="16" to="5"/>
+      <Mapping from="17" to="9"/>
+      <Mapping from="18" to="23"/>
+      <Mapping from="19" to="7"/>
+      <Mapping from="20" to="1"/>
+      <Mapping from="21" to="11"/>
+      <Mapping from="22" to="13"/>
+      <Mapping from="23" to="21"/>
+      <Mapping from="24" to="19"/>
+      <Mapping from="25" to="17"/>
+      <Mapping from="26" to="15"/>
+    </Rotor>
+  </Rotors>
+  <Reflector>
+    <Cable from="1" to="25"/>
+    <Cable from="2" to="18"/>
+    <Cable from="3" to="21"/>
+    <Cable from="4" to="8"/>
+    <Cable from="5" to="17"/>
+    <Cable from="6" to="19"/>
+    <Cable from="7" to="12"/>
+    <Cable from="9" to="16"/>
+    <Cable from="10" to="24"/>
+    <Cable from="11" to="14"/>
+    <Cable from="13" to="15"/>
+    <Cable from="20" to="26"/>
+    <Cable from="22" to="23"/>
+  </Reflector>
+</EnigmaMachine>

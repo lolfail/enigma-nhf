@@ -1,7 +1,7 @@
 @startuml
 left to right direction
 hide empty members
-skinparam defaultFontName Fira Code
+skinparam defaultFontName "Fira Code", sans-serif, monospace
 
 +interface "Map<K, V>" as Map {
   +size() : int

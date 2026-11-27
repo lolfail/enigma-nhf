@@ -2,7 +2,7 @@ DOCS_DIR = docs
 OUT_DIR = target
 
 .PHONY: all
-all: spec prog user
+all: spec prog user $(DOCS_DIR)/classisolated.svg $(DOCS_DIR)/classconnected.svg
 
 SPEC = spec
 .PHONY: spec
@@ -47,3 +47,23 @@ clean:
 	rm -f $(OUT_DIR)/$(PROG).pdf
 	rm -f $(DOCS_DIR)/$(PROG)/*.svg
 	rm -rf svg-inkscape
+	rm -rf staging
+	rm -f $(DOCS_DIR)/*.svg
+	rm -f archive.zip
+
+.PHONY: package
+package: all
+	mkdir staging
+
+	mkdir staging/docs
+	cp $(OUT_DIR)/$(PROG).pdf staging/docs/progdoc.pdf
+	cp $(OUT_DIR)/$(USER).pdf staging/docs/userdoc.pdf
+	cp $(OUT_DIR)/$(SPEC).pdf staging/docs/spec.pdf
+	cp $(DOCS_DIR)/*.svg staging/docs/
+
+	cp -r src/ staging/
+	cp pom.xml staging
+	cp README.md staging
+	cp ukwb.xml staging
+
+	(cd staging && zip -r ../archive.zip .)
