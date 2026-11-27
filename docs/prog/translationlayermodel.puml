@@ -1,0 +1,32 @@
+@startuml
+left to right direction
+skinparam defaultFontName Fira Code
+hide stereotype
+
+<style>
+component {
+  Padding 0
+  Margin 0
+}
+</style>
+
+component " " as TranslationLayer {
+  port Integer
+  port Character
+  component intToChar
+  component charToInt
+  Integer --> intToChar
+  intToChar --> Character
+  Character --> charToInt
+  charToInt --> Integer
+
+  label "<b>TranslationLayer</b>"
+}
+
+component EnigmaMachine
+component User
+
+EnigmaMachine -- Integer
+User -- Character
+
+@enduml

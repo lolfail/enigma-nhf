@@ -7,14 +7,14 @@ class Rotor
 
 class reflector <<SelfMap>>
 class plugboard <<SelfMap>>
-class PairMap
+class wiring <<PairMap>>
 
 EnigmaMachine *-- RotorCompartment
-RotorCompartment "one" *-- "many" Rotor
+RotorCompartment "one " *-- "many" Rotor
 Rotor ..> Rotor
 
 EnigmaMachine *-- plugboard
 RotorCompartment *-- reflector
-Rotor *-- PairMap
+Rotor *-- wiring
 
 @enduml

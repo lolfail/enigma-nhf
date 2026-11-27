@@ -15,7 +15,7 @@ spec: $(DOCS_DIR)/$(SPEC)/codingwindow.svg $(DOCS_DIR)/$(SPEC)/saveload.svg $(DO
 
 PROG = prog
 .PHONY: prog
-prog: $(DOCS_DIR)/$(PROG)/enigmamodel.svg $(DOCS_DIR)/$(PROG)/utilsmodel.svg $(DOCS_DIR)/$(PROG)/graphicsmodel.svg
+prog: $(DOCS_DIR)/$(PROG)/enigmamodel.svg $(DOCS_DIR)/$(PROG)/utilsmodel.svg $(DOCS_DIR)/$(PROG)/graphicsmodel.svg $(DOCS_DIR)/$(PROG)/translationlayermodel.svg
 	pandoc --resource-path=$(DOCS_DIR)/$(PROG) \
 		--pdf-engine-opt=-shell-escape \
 		-V lang=hu -V polyglossia-otherlangs="" \

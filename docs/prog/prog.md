@@ -29,23 +29,25 @@ A projekt [_Maven-t_](https://maven.apache.org/) használ a különféle munkafo
 
 ## Futtatás
 
-A projekt a következő parancsok kiadásával futtatható:
+A projekt a következő parancsok kiadásával futtatható [^1]:
 
 ```sh
 mvn compile
 mvn exec:exec
 ```
 
-Ez azért van így, mivel fejlesztés során néhány hiba került elő, melyet explicit argumentum megadással lehetett megoldani.
+[^1]: Ez inkább fejlesztéskor jön jól. Persze lehetne `mvn package && java -jar target/enigma-0.jar`-t is használni.
+
+Ez azért van így, mivel fejlesztés során néhány hiba került elő, melyet explicit argumentum megadással lehetett megoldani, így az `exec` átadja ezeket.
 
 Egy ilyen például, hogy (linux feletti) Wayland-en, a program nem jelenítődik megfelelően meg.
-Ezt a következő változókkal sikerült orvosolni: [^1]
+Ezt a következő változókkal sikerült orvosolni: [^2]
 
 ```sh
 _JAVA_AWT_WM_NONREPARENTING=1 GDK_BACKEND=x11 mvn exec:java
 ```
 
-[^1]: Ez természetesen nem végleges megoldás, de a projekt célja nem az, hogy Wayland alatt fusson specifikusan a program, így számunkra most lényegtelen.
+[^2]: Ez természetesen nem végleges megoldás, de a projekt célja nem az, hogy Wayland alatt fusson specifikusan a program, így számunkra most lényegtelen.
 
 ## Tesztelés
 
@@ -65,7 +67,7 @@ Ez elérhető a projektkönyvtárból: `./target/site/jacoco/index.html`, és a 
 \begin{subfigure}[t]{0.46\textwidth}
   \centering
   \includegraphics[width=\linewidth]{./utilscoverage.png}
-  \caption{\texttt{util} osztályok lefedettsége.}
+  \caption{\texttt{util} osztályok lefedettsége.\footnotemark}
   \label{fig:utils-jacoco}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.46\textwidth}
@@ -77,6 +79,7 @@ Ez elérhető a projektkönyvtárból: `./target/site/jacoco/index.html`, és a 
 \caption{A JaCoCo lefedettségi méréseinek kimenete.}
 \label{fig:jacoco-codecov}
 \end{figure}
+\footnotetext{Kissé szemetszúró a branch coverage-ja, főként, hogy ezek utility osztályok. Viszont valójában ezek az ágak \texttt{panic} ágak, soha nem is szabadna érinteni őket, logikailag lehetetlen kell legyen, hogy bekövetkezzenek.}
 
 ## Dokumentálás
 
@@ -124,6 +127,7 @@ Ezen kettőn belül van egyedül egy `java` directory (hiszen tisztán Java-t ha
 
 A `test` tükrözi a `main` tartalmát, az egyes (feltéve, hogy tesztelt az adott `class`) fájlok nevei megegyeznek a kettőben, csak a tesztelők végére oda van szúrva a `Test` szó.
 
+\newpage
 Jelenleg a struktúra a következő:
 
 - `Main.java`: A program belépési pontja, itt van a `main` függvény.
@@ -152,6 +156,13 @@ Jelenleg a struktúra a következő:
 \label{fig:enigma-classes}
 \end{figure}
 
+Fentebb láthatók az enigma gép modellezése során használt osztályok kapcsolataik, tagváltozók és metódusok nélkül.
+Illetve a két utility osztály, amik generikus `Map`-szerű tárolót valósítanak meg.
+
+Ezek együtt a program szíve.
+Egyikhez használatához sem volna szükséges grafikus felületet biztosítani, nem függ semennyire sem a környezettől.
+
+\newpage
 ## Utility osztályok
 
 Két utility osztály is implementálva van.
@@ -161,17 +172,17 @@ Egyik a `PairMap<A, B>`. Ez egy generikus `Map<A, B>` implementáció, mely egy�
 Másik pedig a `SelfMap<T>`. Ez felhasználja az előzőt, és olyan párosításokat létesít, ahol tulajdonképpen egy csoport elemeit önmagával rendeljük össze egyértelműen.
 Az, hogy felhasználja a `PairMap`-et és úgy valósít meg ilyesféle társításokat, mutatja, hogy van valami kapcsolat valóban a kettő logikája közt.
 
-Viszont különbség például, hogy a `SelfMap` esetén tilthatjuk az identitás összerendeléseket (ahol például 1-et 1-hez rendeljük).
+Viszont különbség, hogy a `SelfMap` esetén tilthatjuk az identitás összerendeléseket (ahol például 1-et 1-hez rendeljük).
 
-Ez például (és specifikusan) ott hasznos, amikor a _reflector_-esetén tiltjuk, viszont _plugboard_-nál megengedjük őket.
+Ez ott hasznos, amikor a _reflector_-esetén tiltjuk, viszont _plugboard_-nál megengedjük őket.
 Hiszen _reflector_-nál szó sem lehet róla, hogy ugyanazon az úton küldjük vissza a jelet, azonban _plugbard_-nál ha nem dugunk be valamit akkor az önmagaként lép a _rotor_-okba.
 
 ## `EnigmaMachine` felépítése
 
 Az `EnigmaMachine` a legfelső réteg, a kész gép, ami képes "megkavarni" a bemenetet és kiadni azt.
-Egyrészt ő lesz az, aki kezeli a _plugboard_-ot, de egyfajta magasabb szintű absztrakciót is biztosít a kényelmesebb[^2] használat érdekében.
+Egyrészt ő lesz az, aki kezeli a _plugboard_-ot, de egyfajta magasabb szintű absztrakciót is biztosít a kényelmesebb[^3] használat érdekében.
 
-[^2]: Kényelemmel kapcsolatban: ha a `RotorCompartment`-et használnánk, akkor nem is egy getter/setter metóduson keresztül kéne dolgozni a géppel. Így viszont egy metódus, egy index és set esetén még egy paraméterrel kezelhetjük.
+[^3]: Kényelemmel kapcsolatban: ha a `RotorCompartment`-et használnánk, akkor nem is egy getter/setter metóduson keresztül kéne dolgozni a géppel. Így viszont egy metódus, egy index és set esetén még egy paraméterrel kezelhetjük.
 
 Másrészt viszont elméletben tökéletesen lehetne már a `RotorCompartment` osztályt is használni, hiszen számos logikai funkciót az biztosít (vagy az azalatti `Rotor`-ok amik alkotják),
 azonban biztosra vélhető volna, hogy így sok kódduplikáció alakulna ki (egyrészt vagy sok ugyanolyan, vagy ami mégrosszabb, sok különböző).
@@ -190,6 +201,8 @@ Valójában ő belsejében `ArrayList`-et használ, így vigyázni kell a `List<
 ## Egyéb komponensek
 
 ### `TranslationLayer`
+
+![A `TranslationLayer` képies használata...](./translationlayermodel.svg){width=65%}
 
 A `TranslationLayer` egy olyan segédosztály, ami izolált az `EnigmaMachine`-től, olyan értelemben, hogy nem függnek egymástól önmagukban.
 Azonban a célja során nagyon is szoros kapcsolat kell, hogy kialakuljon a kettő közt.
