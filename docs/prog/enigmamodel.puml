@@ -1,4 +1,5 @@
 @startuml
+hide empty members
 skinparam defaultFontName Fira Code
 
 class EnigmaMachine

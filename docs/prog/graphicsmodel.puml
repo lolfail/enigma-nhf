@@ -1,6 +1,6 @@
 @startuml
+hide empty members
 skinparam defaultFontName Fira Code
-
 
 class CryptoPanel <<JPanel>>
 class RotorPanel <<JPanel>>

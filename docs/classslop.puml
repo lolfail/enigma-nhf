@@ -1,0 +1,308 @@
+@startuml
+skinparam defaultFontName Fira Code
+
+interface "List<E>" as List {
+  +size() : int
+  +isEmpty() : boolean
+  +contains(o : Object) : boolean
+  +iterator() : Iterator<E>
+  +toArray() : Object[]
+  +toArray(a : T[]) : T[]
+  +add(e : E) : boolean
+  +remove(o : Object) : boolean
+  +containsAll(c : Collection<?>) : boolean
+  +addAll(c : Collection<? extends E>) : boolean
+  +addAll(index : int, c : Collection<? extends E>) : boolean
+  +removeAll(c : Collection<?>) : boolean
+  +retainAll(c : Collection<?>) : boolean
+  +clear() : void
+  +get(index : int) : E
+  +set(index : int, element : E) : E
+  +add(index : int, element : E) : void
+  +remove(index : int) : E
+  +indexOf(o : Object) : int
+  +lastIndexOf(o : Object) : int
+  +listIterator() : ListIterator<E>
+  +listIterator(index : int) : ListIterator<E>
+  +subList(fromIndex : int, toIndex : int) : List<E>
+}
+
+interface "Map<K, V>" as Map {
+  +size() : int
+  +isEmpty() : boolean
+  +containsKey(key : Object) : boolean
+  +containsValue(value : Object) : boolean
+  +get(key : Object) : V
+  +put(key : K, value : V) : V
+  +remove(key : Object) : V
+  +putAll(m : Map<? extends K, ? extends V>) : void
+  +clear() : void
+  +keySet() : Set<K>
+  +values() : Collection<V>
+  +entrySet() : Set<Entry<K, V>>
+}
+
+interface "Set<E>" as Set
+
+package utils {
+  class "PairMap<A, B>" as PairMap {
+    -forwardStore : Map<A, B>
+    -reverseStore : Map<B, A>
+    +putReverse(b : B, a : A) : A
+    +getReverse(b : Object) : A
+    +removeReverse(b : Object) : A
+    +containsKeyReverse(key : Object) : boolean
+    +containsValueReverse(value : Object) : boolean
+    +entrySetReverse() : Set<Entry<B, A>>
+    +keySetReverse() : Set<B>
+    +valuesReverse() : Set<A>
+    +putAllReverse(map : Map) : void
+  }
+
+  class "SelfMap<T>" as SelfMap {
+    -pairings : PairMap<T, T>
+    -identityMappings : boolean
+    -containsIdentity(map : Map<T,T>) : boolean
+    +SelfMap()
+    +SelfMap(identityMappings : boolean)
+    +SelfMap(map : Map<T,T>)
+    +SelfMap(identityMappings : boolean, map : Map<T,T>)
+    +areIdentityMappingsAllowed() : boolean
+  }
+}
+
+package components {
+  class EnigmaMachine {
+    -numContactPoints : int
+    -rotors : RotorCompartment
+    -plugboard : SelfMap
+    -plugboardValidator : Validator
+    -identityMapping() : Map
+    +shallowCopyInternals(other) : void
+    +getNumContactPoints() : int
+    +passThrough(input) : int
+    +setNumRotors(num) : void
+    +getNumRotors() : int
+    +reset() : void
+    +getWiring(rotorIndex) : PairMap
+    +setWiring(rotorIndex, PairMap) : void
+    +getStartingPosition(rotorIndex) : int
+    +setStartingPosition(rotorIndex, position) : void
+    +getReflector() : SelfMap
+    +setReflector(reflector) : void
+    +getPlugboard() : SelfMap
+    +setPlugboard(plugboard) : void
+  }
+
+  class RotorCompartment {
+    -rotors : List
+    -reflector : SelfMap
+    -numContactPoints : int
+    -rotorValidator : Validator
+    -reflectorValidator : Validator
+    +setReflector(reflector) : void
+    +getReflector() : SelfMap
+    +passThrough(pinNum) : int
+    +reset() : void
+  }
+
+  class Rotor {
+    -wiring : PairMap
+    -wiringValidator : Validator
+    -numContactPoints : int
+    -startingPosition : int
+    -rotationalPosition : int
+    -nextRotor : Rotor
+    -modulusRotation(position) : int
+    -getPinRelative(pinNumAbsolute) : int
+    -getPinAbsolute(pinNumRelative) : int
+    +getNumContactPoints() : int
+    +getWiring() : PairMap
+    +setWiring(PairMap) : void
+    +setStartingPosition(position) : void
+    +getStartingPosition() : int
+    +setNextRotor(nextRotor) : void
+    +getNextRotor() : Rotor
+    +forwardPass(forwardPinAbsolute) : int
+    +reversePass(reversePinAbsolute) : int
+    +rotate() : void
+    +getRotationalPosition() : int
+    +reset() : void
+  }
+
+  class EnigmaMarshaller {
+    -indexDelta : int
+    -appendMapChildren(doc, Map) : void
+    -requireAttributeParsed(element, attributeName) : int
+    -requireExistanceUniquenessOfTagName(parent, name) : Element
+    -putChildrenToMap(Map) : void
+    +write(ostream, enigmaMachine) : void
+    +read(istream) : EnigmaMachine
+  }
+  exception CorruptedBackupError
+
+  class TranslationLayer {
+    -translator : PairMap
+    +getDictionary() : PairMap
+    +charToInt(ch) : Integer
+    +intToChar(i) : Character
+    +charPairMapToIntPairMap(PairMap) : PairMap
+    +intPairMapToCharPairMap(PairMap) : PairMap
+    +charSelfMapToIntSelfMap(charMap) : SelfMap
+    +intSelfMapToCharSelfMap(intMap) : SelfMap
+  }
+}
+
+package validators {
+  interface Validator {
+    +validate(obj)
+  }
+  exception ValidatorException
+
+  class PlugboardValidator {
+    -numContactPoints : int
+    +validate(plugboard) : void
+  }
+  exception PlugboardException
+
+  class ReflectorValidator {
+    -numContactPoints : int
+    +validate(reflector) : void
+  }
+  exception ReflectorException
+
+  class RotorValidator {
+    -numContactPoints : int
+    +validate(rotor) : void
+  }
+  exception RotorException
+
+  class RotorWiringValidator {
+    -numContactPoints : int
+    +validate(PairMap) : void
+  }
+  exception RotorWiringException
+}
+
+package graphical {
+  class CryptoPanel {
+    -enigmaMachine : EnigmaMachine
+    -translationLayer : TranslationLayer
+    -ignoredChars : List
+    -inputTextArea : JTextArea
+    -outputTextArea : JTextArea
+    -handleCryptButtonPress(_e) : void
+  }
+
+  class FileMenu {
+    -marshaller : EnigmaMarshaller
+    -enigmaMachine : EnigmaMachine
+    -createChooser(title) : JFileChooser
+    -save(_e) : void
+    -load(_e) : void
+  }
+
+  class LazyCardPanel {
+    -views : Map
+    -currentView : JPanel
+    +registerView(identifier, factory) : void
+    +showView(identifier) : void
+    +getJMenuItem(identifier, name) : JMenuItem
+  }
+
+  class MainFrame {
+  }
+
+  class MappingsListPanel {
+    -translationLayer : TranslationLayer
+  }
+
+  class RotorComboBox {
+    -translationLayer : TranslationLayer
+    -selectStartIndex : Consumer
+    -previousStartIndex : Supplier
+    -handleSelection(e) : void
+  }
+
+  class RotorPanel {
+    -rows : int
+    -cols : int
+    -enigmaMachine : EnigmaMachine
+    -translationLayer : TranslationLayer
+    -managedRotorsPanel : JPanel
+    -parentWindow : Window
+    -redrawManagedRotorsPanel() : void
+    -constructRotorConfigEntry(rotorIndex) : JPanel
+    -constructRotorConfigPanel() : JPanel
+    -constructRotorNumConfigPanel() : JPanel
+  }
+}
+
+class Main {
+  -shiftMapping(count) : Map
+  +main() : void
+}
+
+utils.PairMap "1" *-- "2" Map
+utils.PairMap --> Map
+utils.PairMap --> Set
+utils.SelfMap *-- utils.PairMap
+utils.SelfMap --> Set
+utils.SelfMap --> Map
+
+validators.PlugboardException --|> validators.ValidatorException
+validators.PlugboardValidator *-- validators.PlugboardException
+validators.PlugboardValidator ..|> validators.Validator
+validators.PlugboardValidator --> utils.SelfMap
+
+validators.ReflectorException --|> validators.ValidatorException
+validators.ReflectorValidator *-- validators.ReflectorException
+validators.ReflectorValidator ..|> validators.Validator
+validators.ReflectorValidator --> utils.SelfMap
+
+validators.RotorException --|> validators.ValidatorException
+validators.RotorValidator *-- validators.RotorException
+validators.RotorValidator ..|> validators.Validator
+validators.RotorValidator --> components.Rotor
+
+validators.RotorWiringException --|> validators.ValidatorException
+validators.RotorWiringValidator *-- validators.RotorWiringException
+validators.RotorWiringValidator ..|> validators.Validator
+validators.RotorWiringValidator --> utils.PairMap
+
+Main *-- components.EnigmaMachine
+Main *-- components.TranslationLayer
+Main *-- graphical.MainFrame
+
+components.EnigmaMachine *-- components.RotorCompartment
+components.EnigmaMachine *-- validators.Validator
+components.EnigmaMachine *-- utils.SelfMap
+
+components.RotorCompartment ..|> List
+components.RotorCompartment "1" *-- "n" components.Rotor
+components.RotorCompartment *-- utils.SelfMap
+components.RotorCompartment *-- validators.Validator
+
+components.Rotor *-- utils.PairMap
+components.Rotor *-- validators.Validator
+components.Rotor ..> components.Rotor
+
+components.EnigmaMarshaller *-- components.CorruptedBackupError
+components.EnigmaMarshaller --> components.EnigmaMachine
+
+components.TranslationLayer *-- utils.PairMap
+components.TranslationLayer --> utils.SelfMap
+components.TranslationLayer --> utils.PairMap
+
+graphical.CryptoPanel o-- components.EnigmaMachine
+graphical.CryptoPanel o-- components.TranslationLayer
+graphical.CryptoPanel ..> components.TranslationLayer
+graphical.FileMenu --> components.EnigmaMarshaller
+graphical.FileMenu o-- components.EnigmaMachine
+graphical.MainFrame *-- graphical.LazyCardPanel
+graphical.MappingsListPanel o-- components.TranslationLayer
+graphical.RotorComboBox o-- components.TranslationLayer
+graphical.RotorPanel o-- components.EnigmaMachine
+graphical.RotorPanel o-- components.TranslationLayer
+graphical.RotorPanel ..> components.TranslationLayer
+@enduml
