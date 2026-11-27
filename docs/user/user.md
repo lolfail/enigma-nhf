@@ -88,8 +88,17 @@ A mellette lévő **Configure** gombbal pedig megnyitható új ablakban egy öss
 
 ## Reflector és Plugboard panelok
 
+A gép beállításakor lehetőség van a _reflector_ összehuzalozását beállítani.
+Ez a felső menüsáv **Reflector** pontjából érhető el.
+
+Továbbá lehetséges a _plugboard_ használata, összetársítgatni különféle karaktereket.
+Ez pedig ugyanabban a menüsávban a **Plugboard** pontban található.
+
 Mindkét említett panel ugyanazt a grafikus elemet használja, hiszen mindkettő esetén a gépben lévő pineket (mely az ábécé méretél arányos) kell összetársítgatni.
 Ez a felület pontosan erre való.
+
+Megadhatjuk mely karaktereket "kössük" össze. Van amikor a sorrendje ezeknek nem számít (például a _reflector_ vagy _plugboard_ esetében), mert ilyenkor egy-egy karakterből csak egy van.
+Azonban van amikor számít, ilyen a _rotor-ok_ belső összeköttetése, mivel ekkor egy-egy karakter a _rotor_ mindkét oldalán megtalálható.
 
 ![Összetársítási panel egy sikeres művelet után, visszajelezve a társításokat is.](./mappingspanel.png)
 
@@ -97,7 +106,7 @@ Ez a felület pontosan erre való.
 
 - összetársítandó karakterek egymás mellett
 - egy szóközzel elválasztva
-- ha számít az összerendeltek sorrendje, akkor az `első -> második`
+- ha számít két egymás melletti karakter sorrendje, akkor az a leírttal egyezik meg
 
 Majd kattintsunk az **Ok** gombra.
 
@@ -125,4 +134,34 @@ Ez a felület visszajelzi a felhasználónak a művelet sikerességét, vagy ha 
 \end{subfigure}
 \caption{Összetársítós panel néhány visszajelzése}
 \label{mapping-feedbacks}
+\end{figure}
+
+\newpage
+# Konfiguráció elmentése és betöltése
+
+A gép beállítása után, lehetőség van annak elmentésére.
+Ez a **File** menüpontban tehető meg, a lenyíló menüből a **Save** opciót választva.
+
+![**File** menüpont **Save** opciója.](./filemenu.png)
+
+Ekkor megnyílik egy ablak ahol kiválaszthatjuk a fájl nevét és helyét ahová elmentse.
+
+Ugyanígy tehető meg a korábban elmentett konfiguráció megnyitása is, csak ezúttal a **Load** opciót választva.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.46\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./saveconfig.png}
+  \caption{Konfiguráció elmentése ablak.}
+  \label{fig:saveconfig}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.46\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{./loadconfig.png}
+  \caption{Konfiguráció betöltése ablak.}
+  \label{fig:loadconfig}
+\end{subfigure}
+\caption{Konfiguráció elmentése és betölése ablakok.}
+\label{configloadsave}
 \end{figure}
