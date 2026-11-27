@@ -64,8 +64,9 @@ public class FileMenu extends JMenu {
    */
   private void load(ActionEvent _e) {
     JFileChooser chooser = createChooser("Load Configuration");
+    chooser.setApproveButtonText("Load");
 
-    int returnVal = chooser.showSaveDialog(this.getParent());
+    int returnVal = chooser.showOpenDialog(this.getParent());
     if (returnVal != JFileChooser.APPROVE_OPTION)
       return;
 

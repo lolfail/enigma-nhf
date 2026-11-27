@@ -110,10 +110,10 @@ public class MainFrame extends JFrame {
 
     JMenuBar menuBar = new JMenuBar();
     menuBar.add(new FileMenu("File", enigmaMachine));
-    menuBar.add(lazyCardPanel.getJMenuItem("CRYPTO", "crypto"));
-    menuBar.add(lazyCardPanel.getJMenuItem("REFLECTOR", "reflector"));
-    menuBar.add(lazyCardPanel.getJMenuItem("PLUGBOARD", "plugboard"));
-    menuBar.add(lazyCardPanel.getJMenuItem("ROTOR", "rotors"));
+    menuBar.add(lazyCardPanel.getJMenuItem("CRYPTO", "Crypto"));
+    menuBar.add(lazyCardPanel.getJMenuItem("REFLECTOR", "Reflector"));
+    menuBar.add(lazyCardPanel.getJMenuItem("PLUGBOARD", "Plugboard"));
+    menuBar.add(lazyCardPanel.getJMenuItem("ROTOR", "Rotors"));
 
     setJMenuBar(menuBar);
 

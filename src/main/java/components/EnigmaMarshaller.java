@@ -96,7 +96,8 @@ public class EnigmaMarshaller {
     for (int i = 0; i < enigmaMachine.getNumRotors(); i++) {
       Element rotor = doc.createElement("Rotor");
 
-      rotor.setAttribute("position", Integer.toString(i + indexDelta, 10));
+      int startingPosition = enigmaMachine.getStartingPosition(i) + indexDelta;
+      rotor.setAttribute("position", Integer.toString(startingPosition));
       appendMapChildren(doc, enigmaMachine.getWiring(i), rotor, "Mapping", false);
 
       rotors.appendChild(rotor);
@@ -210,12 +211,13 @@ public class EnigmaMarshaller {
     enigmaMachine.setNumRotors(numRotors);
     for (int i = 0; i < numRotors; i++) {
       Element rotor = (Element) rotorChildren.item(i);
-      int position = requireAttributeParsed(rotor, "position");
+      int startingPosition = requireAttributeParsed(rotor, "position");
 
       PairMap<Integer, Integer> wiring = new PairMap<>();
       putChildrenToMap(wiring, rotor, "Mapping");
 
-      enigmaMachine.setWiring(position - indexDelta, wiring);
+      enigmaMachine.setWiring(i, wiring);
+      enigmaMachine.setStartingPosition(i, startingPosition - indexDelta);
     }
 
     return enigmaMachine;
